@@ -14,3 +14,17 @@ body {
 .input-field {
   @apply w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500;
 }
+
+/* Hero section overlay */
+.bg-cover {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Smooth transitions */
+.transition {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}

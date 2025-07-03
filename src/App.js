@@ -1,17 +1,17 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
-import Home from './pages/Home';
-import Menu from './pages/Menu';
-import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
-import OrderConfirmation from './pages/OrderConfirmation';
-import MyOrders from './pages/MyOrders';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import ProtectedRoute from './components/ui/ProtectedRoute';
-import Header from './components/ui/Header';
-import Footer from './components/ui/Footer';
+import { AuthProvider } from './context/AuthContext';  // Correct named import (context)
+import { CartProvider } from './context/CartContext';  // Correct named import (context)
+import Home from './pages/Home';                      // Correct default import
+import Menu from './pages/Menu';                      // Correct default import
+import Cart from './pages/Cart';                      // Correct default import
+import Checkout from './pages/Checkout';              // Correct default import
+import OrderConfirmation from './pages/OrderConfirmation'; // Correct default import
+import MyOrders from './pages/MyOrders';              // Correct default import
+import Login from './pages/Login';                    // Correct default import
+import Register from './pages/Register';              // Correct default import
+import ProtectedRoute from './components/ui/ProtectedRoute'; // Correct default import
+import Header from './components/ui/Header';          // Correct default import
+import Footer from './components/ui/Footer';          // Correct default import
 
 function App() {
   return (
