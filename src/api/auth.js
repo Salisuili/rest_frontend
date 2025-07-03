@@ -1,31 +1,20 @@
-// frontend/src/api/auth.js
-import { createClient } from '@supabase/supabase-js';
+import axios from 'axios';
 
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
-const supabaseKey = process.env.REACT_APP_SUPABASE_KEY;
+const API_URL = process.env.REACT_APP_API_URL;
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
-
-export const login = async (email, password) => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email, password })
-  });
-  
-  return await response.json();
+export const register = async (userData) => {
+  const response = await axios.post(`${API_URL}/api/auth/register`, userData);
+  return response.data;
 };
 
-export const register = async (email, password, fullName, phoneNumber) => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email, password, full_name: fullName, phone_number: phoneNumber })
+export const login = async (credentials) => {
+  const response = await axios.post(`${API_URL}/api/auth/login`, credentials);
+  return response.data;
+};
+
+export const getProfile = async (token) => {
+  const response = await axios.get(`${API_URL}/api/users/profile`, {
+    headers: { Authorization: `Bearer ${token}` }
   });
-  
-  return await response.json();
+  return response.data;
 };
