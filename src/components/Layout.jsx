@@ -1,16 +1,18 @@
-import Header from './ui/Header'
-import Footer from './ui/Footer'
+import Header from './ui/Header';
+import Footer from './ui/Footer';
 
 const Layout = ({ children }) => {
   return (
-    <div className="min-h-screen flex flex-col">
+    // min-vh-100 for min-height: 100vh, d-flex flex-column for flex-col
+    <div className="d-flex flex-column min-vh-100">
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-8">
+      {/* flex-grow-1 for flex-grow, container for mx-auto, px-4 py-5 for padding */}
+      <main className="flex-grow-1 container px-4 py-5">
         {children}
       </main>
       <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;

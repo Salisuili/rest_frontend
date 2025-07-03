@@ -1,18 +1,23 @@
+// frontend/src/pages/Register.jsx
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
+import { toast } from 'react-hot-toast'; // Ensure this import is correct and toast is rendered
+
+// Define the initial empty state for the form
+const initialFormData = {
+  fullName: '',
+  email: '',
+  phoneNumber: '',
+  password: '',
+  confirmPassword: ''
+};
 
 const Register = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phoneNumber: '',
-    password: '',
-    confirmPassword: ''
-  });
+  // Initialize formData with the empty state
+  const [formData, setFormData] = useState(initialFormData);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -24,16 +29,22 @@ const Register = () => {
 
     setLoading(true);
     const result = await register({
-      fullName: formData.fullName,
+      full_name: formData.fullName,
       email: formData.email,
-      phoneNumber: formData.phoneNumber,
+      phone_number: formData.phoneNumber,
       password: formData.password
     });
 
     if (result.success) {
       toast.success('Registration successful!');
-      navigate('/');
+      // Clear the form only on successful registration
+      setFormData(initialFormData);
+      // Give a small delay before navigating to allow the toast to be seen
+      setTimeout(() => {
+        navigate('/');
+      }, 1500); // Navigate after 1.5 seconds
     } else {
+      // For failure, display the error and keep the form data
       toast.error(result.error || 'Registration failed');
     }
     setLoading(false);
@@ -47,93 +58,101 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create an account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="fullName" className="sr-only">Full Name</label>
-              <input
-                id="fullName"
-                name="fullName"
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Full Name"
-                value={formData.fullName}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="sr-only">Email address</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="phoneNumber" className="sr-only">Phone Number</label>
-              <input
-                id="phoneNumber"
-                name="phoneNumber"
-                type="tel"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Phone Number"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="confirmPassword" className="sr-only">Confirm Password</label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+    <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light p-3">
+      <div className="col-12 col-md-8 col-lg-5">
+        <div className="card shadow p-4">
+          <div className="card-body">
+            <h2 className="text-center h3 mb-4">
+              Create an account
+            </h2>
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-            >
-              {loading ? 'Registering...' : 'Register'}
-            </button>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label htmlFor="fullName" className="visually-hidden">Full Name</label>
+                <input
+                  id="fullName"
+                  name="fullName"
+                  type="text"
+                  required
+                  className="form-control"
+                  placeholder="Full Name"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="email" className="visually-hidden">Email address</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  className="form-control"
+                  placeholder="Email address"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="phoneNumber" className="visually-hidden">Phone Number</label>
+                <input
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  type="tel"
+                  required
+                  className="form-control"
+                  placeholder="Phone Number"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="password" className="visually-hidden">Password</label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  className="form-control"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="confirmPassword" className="visually-hidden">Confirm Password</label>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  className="form-control"
+                  placeholder="Confirm Password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn btn-primary w-100"
+                >
+                  {loading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Registering...
+                    </>
+                  ) : (
+                    'Register'
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

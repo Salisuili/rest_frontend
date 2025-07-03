@@ -1,134 +1,144 @@
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
-import { formatCurrency } from '../utils/helpers';
+import { formatCurrency } from '../utils/helpers'; // Assuming this helper is still available
 
 export default function Cart() {
-  const { 
-    cartItems, 
-    removeFromCart, 
-    updateQuantity, 
-    cartTotal, 
-    itemCount, 
-    clearCart 
+  const {
+    cartItems,
+    removeFromCart,
+    updateQuantity,
+    cartTotal,
+    itemCount,
+    clearCart
   } = useCart();
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Your Shopping Cart</h1>
-      
+    <div className="container py-5"> {/* Bootstrap container with vertical padding */}
+      <h1 className="h2 fw-bold mb-4">Your Shopping Cart</h1> {/* Bootstrap heading, bold, margin-bottom */}
+
       {cartItems.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-lg text-gray-600 mb-4">Your cart is empty</p>
-          <Link 
-            to="/menu" 
-            className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+        <div className="text-center py-5"> {/* Centered text, vertical padding */}
+          <p className="lead text-muted mb-4">Your cart is empty</p> {/* Lead text, muted color, margin-bottom */}
+          <Link
+            to="/menu"
+            className="btn btn-primary btn-lg" // Bootstrap primary button, large size
           >
             Browse Menu
           </Link>
         </div>
       ) : (
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="row g-4"> {/* Bootstrap row for main layout, g-4 for gutters */}
           {/* Cart Items */}
-          <div className="lg:w-2/3">
-            <div className="bg-white rounded-lg shadow overflow-hidden">
-              <div className="hidden md:grid grid-cols-12 bg-gray-100 p-4 font-semibold">
-                <div className="col-span-5">Item</div>
-                <div className="col-span-2 text-center">Price</div>
-                <div className="col-span-3 text-center">Quantity</div>
-                <div className="col-span-2 text-right">Total</div>
+          <div className="col-lg-8"> {/* Takes 2/3 width on large screens */}
+            <div className="card shadow-sm overflow-hidden"> {/* Card with shadow, hidden overflow */}
+              {/* Table Header for larger screens */}
+              <div className="d-none d-md-grid align-items-center bg-light p-3 fw-semibold text-muted"
+                   style={{ gridTemplateColumns: '5fr 2fr 3fr 2fr' }}> {/* Custom grid for 12-column equivalent */}
+                <div>Item</div>
+                <div className="text-center">Price</div>
+                <div className="text-center">Quantity</div>
+                <div className="text-end">Total</div>
               </div>
-              
+
               {cartItems.map(item => (
-                <div key={item.id} className="grid grid-cols-12 p-4 border-b items-center">
-                  <div className="col-span-5 flex items-center space-x-4">
-                    <img 
-                      src={item.image_url || '/placeholder-food.jpg'} 
+                <div key={item.id} className="d-grid align-items-center p-3 border-bottom"
+                     style={{ gridTemplateColumns: '5fr 2fr 3fr 2fr' }}> {/* Custom grid for 12-column equivalent */}
+                  <div className="d-flex align-items-center me-3"> {/* Flex for image and text, margin-end */}
+                    <img
+                      src={item.image_url || '/placeholder-food.jpg'}
                       alt={item.name}
-                      className="w-20 h-20 object-cover rounded"
+                      className="rounded me-3" // Bootstrap rounded corners, margin-end
+                      style={{ width: '5rem', height: '5rem', objectFit: 'cover' }} // Specific size and fit
                     />
                     <div>
-                      <h3 className="font-medium">{item.name}</h3>
-                      <button 
+                      <h5 className="h6 fw-medium mb-1">{item.name}</h5> {/* Smaller heading, medium font weight */}
+                      <button
                         onClick={() => removeFromCart(item.id)}
-                        className="text-red-500 text-sm mt-1 hover:text-red-700"
+                        className="btn btn-link text-danger p-0" // Link-style button, red text, no padding
                       >
                         Remove
                       </button>
                     </div>
                   </div>
-                  
-                  <div className="col-span-2 text-center">
+
+                  <div className="text-center d-flex d-md-block justify-content-center"> {/* Centered price, flex on mobile */}
                     {formatCurrency(item.price)}
                   </div>
-                  
-                  <div className="col-span-3 flex justify-center">
-                    <div className="flex items-center border rounded">
-                      <button 
+
+                  <div className="d-flex justify-content-center"> {/* Centered quantity controls */}
+                    <div className="input-group input-group-sm w-auto"> {/* Small input group for quantity */}
+                      <button
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="px-3 py-1 hover:bg-gray-100"
+                        className="btn btn-outline-secondary" // Outlined button
                         disabled={item.quantity <= 1}
                       >
                         -
                       </button>
-                      <span className="px-4">{item.quantity}</span>
-                      <button 
+                      <input
+                        type="text"
+                        className="form-control text-center px-2" // Centered text, reduced horizontal padding
+                        value={item.quantity}
+                        readOnly
+                        style={{ width: '4rem' }} // Fixed width for quantity input
+                      />
+                      <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="px-3 py-1 hover:bg-gray-100"
+                        className="btn btn-outline-secondary"
                       >
                         +
                       </button>
                     </div>
                   </div>
-                  
-                  <div className="col-span-2 text-right font-medium">
+
+                  <div className="text-end fw-medium d-flex d-md-block justify-content-end"> {/* End-aligned total, flex on mobile */}
                     {formatCurrency(item.price * item.quantity)}
                   </div>
                 </div>
               ))}
-              
-              <div className="p-4 flex justify-end">
-                <button 
+
+              <div className="p-3 d-flex justify-content-end"> {/* Padding, flex to end */}
+                <button
                   onClick={clearCart}
-                  className="text-red-500 hover:text-red-700"
+                  className="btn btn-link text-danger" // Link-style button, red text
                 >
                   Clear Cart
                 </button>
               </div>
             </div>
           </div>
-          
+
           {/* Order Summary */}
-          <div className="lg:w-1/3">
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold mb-6">Order Summary</h2>
-              
-              <div className="space-y-4">
-                <div className="flex justify-between">
+          <div className="col-lg-4"> {/* Takes 1/3 width on large screens */}
+            <div className="card shadow-sm p-4"> {/* Card with shadow and padding */}
+              <h2 className="h4 fw-semibold mb-4">Order Summary</h2> {/* Smaller heading, semi-bold */}
+
+              <div className="d-grid gap-3 mb-4"> {/* Bootstrap grid for summary lines, gap between lines */}
+                <div className="d-flex justify-content-between">
                   <span>Items ({itemCount}):</span>
                   <span>{formatCurrency(cartTotal)}</span>
                 </div>
-                
-                <div className="flex justify-between">
+
+                <div className="d-flex justify-content-between">
                   <span>Delivery Fee:</span>
                   <span>{cartTotal > 5000 ? 'FREE' : formatCurrency(1000)}</span>
                 </div>
-                
-                <div className="border-t pt-4 flex justify-between font-bold text-lg">
+
+                <div className="border-top pt-3 d-flex justify-content-between fw-bold fs-5"> {/* Border top, padding top, bold, larger font size */}
                   <span>Total:</span>
                   <span>{formatCurrency(cartTotal > 5000 ? cartTotal : cartTotal + 1000)}</span>
                 </div>
               </div>
-              
+
               <Link
                 to="/checkout"
-                className="block w-full mt-6 bg-green-600 hover:bg-green-700 text-white text-center py-3 rounded-lg transition"
+                className="btn btn-success w-100 mb-3" // Success button, full width, margin bottom
               >
                 Proceed to Checkout
               </Link>
-              
+
               <Link
                 to="/menu"
-                className="block w-full mt-4 text-center text-blue-600 hover:text-blue-800"
+                className="btn btn-link w-100 text-primary" // Link button, full width, primary color
               >
                 Continue Shopping
               </Link>

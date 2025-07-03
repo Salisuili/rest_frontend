@@ -6,16 +6,23 @@ const Home = () => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-[calc(100vh-64px)]">
+    <>
       {/* Hero Section */}
-      <section className="relative bg-cover bg-center h-[500px] flex items-center" 
-               style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/restaurant-hero.jpg')" }}>
-        <div className="container mx-auto px-4 text-center text-white">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">Welcome to Our Restaurant</h1>
-          <p className="text-xl md:text-2xl mb-8">Delicious food delivered to your doorstep</p>
-          <Link 
-            to="/menu" 
-            className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg text-lg transition duration-300"
+      <section
+        className="position-relative d-flex align-items-center text-white"
+        style={{
+          backgroundImage: "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/restaurant-hero.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          height: '500px', // Specific height, consider using vh units if truly responsive needed
+        }}
+      >
+        <div className="container text-center py-5"> {/* py-5 for top/bottom padding within hero */}
+          <h1 className="display-4 fw-bold mb-4">Welcome to Our Restaurant</h1> {/* display-4 for large text, fw-bold */}
+          <p className="lead mb-5">Delicious food delivered to your doorstep</p> {/* lead for larger paragraph text */}
+          <Link
+            to="/menu"
+            className="btn btn-warning btn-lg fw-bold px-5 py-3 rounded-3" // Bootstrap warning button (often orange-yellow), large size, bold, custom padding, more rounded
           >
             Browse Menu
           </Link>
@@ -23,71 +30,120 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Why Choose Us</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="text-4xl mb-4">🍔</div>
-              <h3 className="text-xl font-semibold mb-2">Fresh Ingredients</h3>
-              <p>We use only the freshest ingredients sourced from local farms</p>
+      <section className="py-5 bg-light"> {/* py-5 for vertical padding, bg-light for gray background */}
+        <div className="container">
+          <h2 className="h2 fw-bold text-center mb-5">Why Choose Us</h2> {/* h2, bold, centered, mb-5 for spacing */}
+          <div className="row row-cols-1 row-cols-md-3 g-4"> {/* Bootstrap grid: 1 column on small, 3 on md+, g-4 for gutter */}
+            <div className="col"> {/* Column wrapper for each feature */}
+              <div className="card shadow-sm p-4 text-center h-100"> {/* Card with shadow, padding, centered text, full height */}
+                <div className="fs-1 mb-3">🍔</div> {/* fs-1 for larger emoji size */}
+                <h3 className="h5 fw-semibold mb-2">Fresh Ingredients</h3> {/* h5, semi-bold */}
+                <p className="card-text">We use only the freshest ingredients sourced from local farms</p>
+              </div>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="text-4xl mb-4">⏱️</div>
-              <h3 className="text-xl font-semibold mb-2">Fast Delivery</h3>
-              <p>Get your food delivered in under 30 minutes or it's free</p>
+            <div className="col">
+              <div className="card shadow-sm p-4 text-center h-100">
+                <div className="fs-1 mb-3">⏱️</div>
+                <h3 className="h5 fw-semibold mb-2">Fast Delivery</h3>
+                <p className="card-text">Get your food delivered in under 30 minutes or it's free</p>
+              </div>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="text-4xl mb-4">👨‍🍳</div>
-              <h3 className="text-xl font-semibold mb-2">Expert Chefs</h3>
-              <p>Our chefs have over 20 years of culinary experience</p>
+            <div className="col">
+              <div className="card shadow-sm p-4 text-center h-100">
+                <div className="fs-1 mb-3">👨‍🍳</div>
+                <h3 className="h5 fw-semibold mb-2">Expert Chefs</h3>
+                <p className="card-text">Our chefs have over 20 years of culinary experience</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Popular Dishes */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Our Specialties</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-lg overflow-hidden shadow-md">
-              <img src="/dish1.jpg" alt="Special Dish 1" className="w-full h-48 object-cover" />
-              <div className="p-4">
-                <h3 className="text-xl font-semibold mb-2">Jollof Rice with Chicken</h3>
-                <p className="text-gray-600 mb-4">Our signature dish with secret recipe</p>
-                <Link to="/menu" className="text-orange-500 hover:text-orange-600 font-medium">
-                  View Details →
-                </Link>
+      <section className="py-5"> {/* py-5 for vertical padding */}
+        <div className="container">
+          <h2 className="h2 fw-bold text-center mb-5">Our Specialties</h2>
+          <div className="row row-cols-1 row-cols-md-3 g-4">
+            <div className="col">
+              <div className="card shadow-sm overflow-hidden h-100"> {/* Card with shadow, hidden overflow, full height */}
+                <img
+                  src="/dish1.jpg"
+                  alt="Special Dish 1"
+                  className="card-img-top"
+                  style={{ height: '12rem', objectFit: 'cover' }} // Specific height and object-fit
+                />
+                <div className="card-body"> {/* card-body for padding */}
+                  <h3 className="h5 fw-semibold mb-2">Jollof Rice with Chicken</h3>
+                  <p className="card-text text-muted mb-3">Our signature dish with secret recipe</p>
+                  <Link to="/menu" className="link-warning fw-medium text-decoration-none"> {/* Link with warning color, no underline */}
+                    View Details &rarr;
+                  </Link>
+                </div>
               </div>
             </div>
-            {/* Repeat for other dishes */}
+            {/* Repeat for other dishes - you'll add similar `col` divs here */}
+            {/* Example for a second dish: */}
+            <div className="col">
+              <div className="card shadow-sm overflow-hidden h-100">
+                <img
+                  src="/dish2.jpg" // Assuming you have dish2.jpg
+                  alt="Special Dish 2"
+                  className="card-img-top"
+                  style={{ height: '12rem', objectFit: 'cover' }}
+                />
+                <div className="card-body">
+                  <h3 className="h5 fw-semibold mb-2">Amala and Ewedu</h3>
+                  <p className="card-text text-muted mb-3">A traditional local delicacy</p>
+                  <Link to="/menu" className="link-warning fw-medium text-decoration-none">
+                    View Details &rarr;
+                  </Link>
+                </div>
+              </div>
+            </div>
+            {/* Example for a third dish: */}
+            <div className="col">
+              <div className="card shadow-sm overflow-hidden h-100">
+                <img
+                  src="/dish3.jpg" // Assuming you have dish3.jpg
+                  alt="Special Dish 3"
+                  className="card-img-top"
+                  style={{ height: '12rem', objectFit: 'cover' }}
+                />
+                <div className="card-body">
+                  <h3 className="h5 fw-semibold mb-2">Grilled Fish with Fries</h3>
+                  <p className="card-text text-muted mb-3">Perfectly grilled for a healthy choice</p>
+                  <Link to="/menu" className="link-warning fw-medium text-decoration-none">
+                    View Details &rarr;
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Call to Action */}
-      <section className="py-16 bg-orange-500 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">Ready to order?</h2>
+      <section className="py-5 bg-warning text-white"> {/* py-5, bg-warning (often maps to orange), white text */}
+        <div className="container text-center">
+          <h2 className="h2 fw-bold mb-4">Ready to order?</h2>
           {user ? (
-            <Link 
-              to="/menu" 
-              className="inline-block bg-white text-orange-500 hover:bg-gray-100 font-bold py-3 px-8 rounded-lg text-lg transition duration-300"
+            <Link
+              to="/menu"
+              className="btn btn-light btn-lg fw-bold px-5 py-3 rounded-3" // Light button for contrast, large, bold, padding, rounded
             >
               Order Now
             </Link>
           ) : (
             <div>
-              <Link 
-                to="/register" 
-                className="inline-block bg-white text-orange-500 hover:bg-gray-100 font-bold py-3 px-8 rounded-lg text-lg transition duration-300 mr-4"
+              <Link
+                to="/register"
+                className="btn btn-light btn-lg fw-bold px-5 py-3 rounded-3 me-3" // Light button, spacing on right
               >
                 Sign Up
               </Link>
-              <Link 
-                to="/menu" 
-                className="inline-block border-2 border-white text-white hover:bg-white hover:text-orange-500 font-bold py-3 px-8 rounded-lg text-lg transition duration-300"
+              <Link
+                to="/menu"
+                className="btn btn-outline-light btn-lg fw-bold px-5 py-3 rounded-3" // Outlined light button
               >
                 Browse as Guest
               </Link>
@@ -95,7 +151,7 @@ const Home = () => {
           )}
         </div>
       </section>
-    </div>
+    </>
   );
 };
 

@@ -1,19 +1,19 @@
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white py-8">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-4 md:mb-0">
-            <h3 className="text-xl font-bold">Restaurant App</h3>
-            <p className="text-gray-400">Delicious food at your doorstep</p>
+    <footer className="bg-dark text-white py-4 mt-auto"> {/* bg-dark for dark background, py-4 for vertical padding, mt-auto pushes to bottom */}
+      <div className="container"> {/* Bootstrap container for fixed width */}
+        <div className="d-flex flex-column flex-md-row justify-content-between align-items-center"> {/* Flexbox for responsive layout */}
+          <div className="mb-3 mb-md-0 text-center text-md-start"> {/* Margin bottom, responsive text alignment */}
+            <h5 className="fw-bold">Restaurant App</h5> {/* Bootstrap heading and bold font weight */}
+            <p className="text-muted small mb-0">Delicious food at your doorstep</p> {/* Muted text, small font, no bottom margin */}
           </div>
-          <div className="flex space-x-6">
-            <a href="#" className="hover:text-blue-400">About Us</a>
-            <a href="#" className="hover:text-blue-400">Contact</a>
-            <a href="#" className="hover:text-blue-400">Terms</a>
+          <div className="d-flex gap-3"> {/* Flexbox for links, gap for spacing */}
+            <a href="#" className="link-light text-decoration-none">About Us</a> {/* Link styling, no underline */}
+            <a href="#" className="link-light text-decoration-none">Contact</a>
+            <a href="#" className="link-light text-decoration-none">Terms</a>
           </div>
         </div>
-        <div className="mt-8 text-center text-gray-400 text-sm">
+        <div className="text-center text-muted small mt-3"> {/* Centered muted text, small font, top margin */}
           © {new Date().getFullYear()} Restaurant App. All rights reserved.
         </div>
       </div>

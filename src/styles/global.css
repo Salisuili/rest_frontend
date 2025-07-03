@@ -1,28 +1,45 @@
+/* src/styles/global.css */
+
+/* Tailwind Directives - REQUIRED */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Inter', sans-serif;
+/* Custom Base Styles */
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+    @apply bg-gray-50 text-gray-800;
+  }
+  
+  h1 {
+    @apply text-3xl font-bold mb-4;
+  }
+  
+  h2 {
+    @apply text-2xl font-semibold mb-3;
+  }
 }
 
-/* Custom styles */
-.btn-primary {
-  @apply bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition;
+/* Custom Components */
+@layer components {
+  .btn-primary {
+    @apply bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors;
+  }
+  
+  .input-field {
+    @apply w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500;
+  }
 }
 
-.input-field {
-  @apply w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500;
-}
-
-/* Hero section overlay */
+/* Utility Classes */
 .bg-cover {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-/* Smooth transitions */
+/* Transitions */
 .transition {
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);

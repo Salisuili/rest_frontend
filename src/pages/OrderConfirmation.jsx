@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getOrderDetails } from '../api/orders';
-import LoadingSpinner from '../components/ui/LoadingSpinner';
+import LoadingSpinner from '../components/ui/LoadingSpinner'; // Assuming this is Bootstrap-ready
 
 const OrderConfirmation = () => {
   const { id } = useParams();
@@ -16,80 +16,111 @@ const OrderConfirmation = () => {
         setOrder(orderData);
       } catch (error) {
         console.error('Error fetching order:', error);
+        // If order details fail to load, navigate to the homepage or a relevant error page
         navigate('/');
       } finally {
         setLoading(false);
       }
     };
     fetchOrder();
-  }, [id, navigate]);
+  }, [id, navigate]); // Add navigate to dependency array as it's used in useEffect
 
-  if (loading) return <LoadingSpinner />;
+  // Display a loading spinner while order details are being fetched
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center min-vh-100">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  // If order is null after loading (e.g., failed to fetch and navigate didn't kick in immediately)
+  if (!order) {
+    return (
+      <div className="container py-5 text-center">
+        <p className="lead text-danger">Order details could not be loaded.</p>
+        <button onClick={() => navigate('/')} className="btn btn-primary mt-3">
+          Go to Homepage
+        </button>
+      </div>
+    );
+  }
+
+  // Helper function to get Bootstrap badge classes based on order status
+  const getStatusBadgeClass = (status) => {
+    switch (status) {
+      case 'completed':
+        return 'bg-success text-white'; // Bootstrap's success background, white text
+      case 'cancelled':
+        return 'bg-danger text-white';   // Bootstrap's danger background, white text
+      default:
+        return 'bg-warning text-dark';   // Bootstrap's warning background, dark text
+    }
+  };
 
   return (
-    <div className="container mx-auto p-4 max-w-4xl">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold mb-6">Order Confirmation</h1>
-        <div className="mb-6 p-4 bg-green-50 rounded-lg">
-          <h2 className="text-xl font-semibold text-green-800">
-            Thank you for your order!
-          </h2>
-          <p className="mt-2">
-            Your order #{order.order_number} has been placed successfully.
+    <div className="container py-4"> {/* Bootstrap container with vertical padding */}
+      <div className="card shadow-sm p-4 mx-auto" style={{ maxWidth: '800px' }}> {/* Card with shadow, padding, and centered max-width */}
+        <h1 className="h3 fw-bold mb-4">Order Confirmation</h1> {/* Bootstrap heading, bold, margin-bottom */}
+
+        <div className="alert alert-success p-3 mb-4" role="alert"> {/* Bootstrap alert for success message */}
+          <h2 className="h5 alert-heading">Thank you for your order!</h2> {/* Smaller heading for alert */}
+          <p className="mb-0">
+            Your order #<strong>{order.order_number}</strong> has been placed successfully.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          <div>
-            <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
-            <div className="space-y-4">
+        <div className="row g-4"> {/* Bootstrap row with gutters for main content layout */}
+          <div className="col-md-6"> {/* Takes half width on medium screens and up */}
+            <h2 className="h5 fw-semibold mb-3">Order Summary</h2> {/* Smaller heading, semi-bold */}
+            <div className="d-grid gap-3"> {/* Bootstrap grid for spacing between order items */}
               {order.order_items.map((item) => (
-                <div key={item.id} className="flex justify-between">
+                <div key={item.id} className="d-flex justify-content-between align-items-baseline">
                   <div>
-                    <p>{item.menu_items.name} × {item.quantity}</p>
+                    <p className="mb-0">{item.menu_items.name} &times; {item.quantity}</p>
                   </div>
-                  <p>₦{(item.price_at_order * item.quantity).toLocaleString()}</p>
+                  <p className="mb-0 fw-bold">₦{(item.price_at_order * item.quantity).toLocaleString()}</p>
                 </div>
               ))}
             </div>
-            <div className="border-t mt-4 pt-4 space-y-2">
-              <div className="flex justify-between">
+            <div className="border-top pt-3 mt-3 d-grid gap-2"> {/* Border top, padding top, margin top */}
+              <div className="d-flex justify-content-between">
                 <span>Subtotal:</span>
                 <span>₦{order.subtotal.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="d-flex justify-content-between">
                 <span>Delivery Fee:</span>
                 <span>₦{order.delivery_fee.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between font-bold text-lg">
+              <div className="d-flex justify-content-between fw-bold fs-5 pt-2 border-top mt-2"> {/* Bold text, larger font size */}
                 <span>Total:</span>
                 <span>₦{order.total_amount.toLocaleString()}</span>
               </div>
             </div>
           </div>
 
-          <div>
-            <h2 className="text-lg font-semibold mb-4">Delivery Information</h2>
-            <div className="space-y-2">
-              <p><strong>Address:</strong> {order.delivery_address}</p>
-              <p><strong>Status:</strong> 
-                <span className={`ml-2 px-2 py-1 rounded ${
-                  order.status === 'completed' ? 'bg-green-100 text-green-800' :
-                  order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                  'bg-yellow-100 text-yellow-800'
-                }`}>
+          <div className="col-md-6"> {/* Takes half width on medium screens and up */}
+            <h2 className="h5 fw-semibold mb-3">Delivery Information</h2> {/* Smaller heading, semi-bold */}
+            <div className="d-grid gap-2"> {/* Bootstrap grid for spacing */}
+              <p className="mb-0"><strong>Address:</strong> {order.delivery_address}</p>
+              <p className="mb-0">
+                <strong>Status:</strong>
+                <span className={`badge rounded-pill ms-2 ${getStatusBadgeClass(order.status)}`}> {/* Bootstrap badge */}
                   {order.status}
                 </span>
               </p>
-              <p><strong>Order Date:</strong> {new Date(order.created_at).toLocaleString()}</p>
+              <p className="mb-0"><strong>Order Date:</strong> {new Date(order.created_at).toLocaleString()}</p>
+              {order.delivery_notes && (
+                <p className="mb-0"><strong>Special Notes:</strong> {order.delivery_notes}</p>
+              )}
             </div>
           </div>
         </div>
 
-        <div className="mt-8">
+        <div className="text-center mt-5"> {/* Center content, margin top */}
           <button
             onClick={() => navigate('/menu')}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="btn btn-primary px-4 py-2" // Bootstrap primary button
           >
             Back to Menu
           </button>

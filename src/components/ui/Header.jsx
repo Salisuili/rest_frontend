@@ -7,42 +7,65 @@ const Header = () => {
   const { itemCount } = useCart();
 
   return (
-    <header className="bg-white shadow-sm">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="text-xl font-bold text-blue-600">
+    <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+      <div className="container">
+        <Link to="/" className="navbar-brand text-primary fw-bold"> {/* text-primary and fw-bold for branding */}
           Restaurant App
         </Link>
-        
-        <nav className="flex items-center space-x-6">
-          <Link to="/menu" className="hover:text-blue-600">Menu</Link>
-          
-          <div className="relative">
-            <Link to="/cart" className="hover:text-blue-600 flex items-center">
-              Cart
-              {itemCount > 0 && (
-                <span className="ml-1 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {itemCount}
-                </span>
-              )}
-            </Link>
-          </div>
-          
-          {user ? (
-            <div className="flex items-center space-x-4">
-              <Link to="/my-orders" className="hover:text-blue-600">My Orders</Link>
-              <button 
-                onClick={logout}
-                className="text-red-500 hover:text-red-700"
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <Link to="/login" className="hover:text-blue-600">Login</Link>
-          )}
-        </nav>
+
+        {/* Navbar Toggler for mobile */}
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav ms-auto mb-2 mb-lg-0"> {/* ms-auto pushes nav items to the right */}
+            <li className="nav-item">
+              <Link to="/menu" className="nav-link">Menu</Link>
+            </li>
+
+            <li className="nav-item position-relative"> {/* position-relative for the cart badge */}
+              <Link to="/cart" className="nav-link d-flex align-items-center">
+                Cart
+                {itemCount > 0 && (
+                  <span className="badge rounded-pill bg-primary ms-1"> {/* Bootstrap badge for count */}
+                    {itemCount}
+                  </span>
+                )}
+              </Link>
+            </li>
+
+            {user ? (
+              <> {/* Use a React Fragment to group conditional elements */}
+                <li className="nav-item">
+                  <Link to="/my-orders" className="nav-link">My Orders</Link>
+                </li>
+                <li className="nav-item">
+                  <button
+                    onClick={logout}
+                    className="btn btn-link text-danger nav-link" // Use btn-link for a link-style button, text-danger for red
+                  >
+                    Logout
+                  </button>
+                </li>
+              </>
+            ) : (
+              <li className="nav-item">
+                <Link to="/login" className="nav-link">Login</Link>
+              </li>
+            )}
+          </ul>
+        </div>
       </div>
-    </header>
+    </nav>
   );
 };
 
