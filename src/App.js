@@ -19,6 +19,7 @@ import MenuItems from './pages/admin/MenuItems';
 import Categories from './pages/admin/Categories';
 import AddCategory from './pages/admin/AddCategory';
 import AddMenuItem from './pages/admin/AddMenuItem';
+import UserManagement from './admin/pages/UserManagement';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
                   <Route path="categories" element={<Categories />} /> 
                   <Route path="categories/new" element={<AddCategory />} />
                   <Route path="menu/new" element={<AddMenuItem />} />
+                  <Route path="users" element={<UserManagement />} />
                 </Route>
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/order-confirmation/:id" element={<OrderConfirmation />} />
