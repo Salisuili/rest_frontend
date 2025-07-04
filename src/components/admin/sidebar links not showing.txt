@@ -1,0 +1,111 @@
+import React, { useState, useEffect } from 'react';
+import { Outlet, Link, useLocation } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { Offcanvas } from 'bootstrap';
+
+const AdminLayout = () => {
+  const [showOffcanvas, setShowOffcanvas] = useState(false);
+  const location = useLocation();
+
+  // Close offcanvas when route changes
+  useEffect(() => {
+    if (showOffcanvas) {
+      setShowOffcanvas(false);
+    }
+  }, [location]);
+
+  // Initialize Bootstrap offcanvas
+  useEffect(() => {
+    const offcanvasElement = document.getElementById('adminOffcanvas');
+    if (offcanvasElement) {
+      const bsOffcanvas = new Offcanvas(offcanvasElement);
+      
+      offcanvasElement.addEventListener('show.bs.offcanvas', () => setShowOffcanvas(true));
+      offcanvasElement.addEventListener('hide.bs.offcanvas', () => setShowOffcanvas(false));
+      
+      return () => {
+        offcanvasElement.removeEventListener('show.bs.offcanvas', () => setShowOffcanvas(true));
+        offcanvasElement.removeEventListener('hide.bs.offcanvas', () => setShowOffcanvas(false));
+      };
+    }
+  }, []);
+
+  const toggleOffcanvas = () => {
+    const offcanvasElement = document.getElementById('adminOffcanvas');
+    if (offcanvasElement) {
+      const bsOffcanvas = Offcanvas.getInstance(offcanvasElement) || 
+                         new Offcanvas(offcanvasElement);
+      bsOffcanvas.toggle();
+    }
+  };
+
+  return (
+    <div className="d-flex" style={{ minHeight: '100vh' }}>
+      {/* Offcanvas Toggle Button - Mobile only */}
+      <button
+        className="btn btn-dark d-md-none position-fixed top-0 start-0 m-3"
+        type="button"
+        onClick={toggleOffcanvas}
+        aria-controls="adminOffcanvas"
+        aria-label="Toggle navigation"
+        style={{ zIndex: 1050 }}
+      >
+        <span className="navbar-toggler-icon"></span>
+      </button>
+
+      {/* Sidebar - Desktop only */}
+      <div
+        className="d-none d-md-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
+        style={{ 
+          width: '250px',
+          minHeight: '100vh',
+          position: 'sticky',
+          top: 0,
+        }}
+      >
+        <h3 className="mb-4 text-center">Admin Panel</h3>
+        <ul className="nav nav-pills flex-column mb-auto">
+          {/* ... sidebar links ... */}
+        </ul>
+      </div>
+
+      {/* Offcanvas - Mobile only */}
+      <div
+        className={`offcanvas offcanvas-start bg-dark text-white`}
+        tabIndex="-1"
+        id="adminOffcanvas"
+        aria-labelledby="adminOffcanvasLabel"
+      >
+        <div className="offcanvas-header">
+          <h3 className="offcanvas-title" id="adminOffcanvasLabel">Admin Panel</h3>
+          <button
+            type="button"
+            className="btn-close btn-close-white text-reset"
+            onClick={toggleOffcanvas}
+            aria-label="Close"
+          ></button>
+        </div>
+        <div className="offcanvas-body p-0">
+          <ul className="nav flex-column">
+            {/* ... offcanvas links ... */}
+          </ul>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <main 
+        className="flex-grow-1 p-4"
+        style={{
+          marginLeft: '0',
+          width: '100%',
+          transition: 'margin 0.3s ease',
+        }}
+      >
+        <Outlet />
+      </main>
+    </div>
+  );
+};
+
+export default AdminLayout;
