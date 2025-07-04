@@ -19,7 +19,7 @@ import MenuItems from './pages/admin/MenuItems';
 import Categories from './pages/admin/Categories';
 import AddCategory from './pages/admin/AddCategory';
 import AddMenuItem from './pages/admin/AddMenuItem';
-import UserManagement from './admin/pages/UserManagement';
+import UserManagement from './pages/admin/UserManagement';
 import NotFound from './pages/NotFound';
 
 function App() {
