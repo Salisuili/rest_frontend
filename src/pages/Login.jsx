@@ -16,13 +16,10 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // --- THE CRUCIAL CHANGE IS HERE ---
-      // Pass an object { email, password } to the login function
-      const result = await login({ email, password }); // Pass as a single object!
+      const result = await login({ email, password }); 
 
       if (result.success) {
         toast.success('Login successful!');
-        // Optional: Clear form fields on successful login
         setEmail('');
         setPassword('');
         navigate('/');

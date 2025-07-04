@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getOrderDetails } from '../api/orders';
+import { getOrderDetails } from '../api/orderApi';
 import LoadingSpinner from '../components/ui/LoadingSpinner'; // Assuming this is Bootstrap-ready
 
 const OrderConfirmation = () => {

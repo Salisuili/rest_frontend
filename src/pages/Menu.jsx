@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { getCategories, getMenuItems } from '../api/menu';
-import MenuItemCard from '../components/menu/MenuItemCard'; // Assuming this component is handled separately
-import CategoryFilter from '../components/menu/CategoryFilter'; // Assuming this component is handled separately
-import LoadingSpinner from '../components/ui/LoadingSpinner'; // Assuming this component is now Bootstrap-ready
+import MenuItemCard from '../components/menu/MenuItemCard'; 
+import CategoryFilter from '../components/menu/CategoryFilter'; 
+import LoadingSpinner from '../components/ui/LoadingSpinner'; 
 
 const Menu = () => {
   const [categories, setCategories] = useState([]);

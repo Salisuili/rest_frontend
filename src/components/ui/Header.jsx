@@ -1,15 +1,16 @@
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext'; // Make sure this path is correct
+import { useCart } from '../../context/CartContext'; // Make sure this path is correct
 
 const Header = () => {
-  const { user, logout } = useAuth();
+  // Destructure 'isAdmin' from useAuth()
+  const { user, logout, isAdmin } = useAuth(); // <--- ADD isAdmin HERE
   const { itemCount } = useCart();
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
       <div className="container">
-        <Link to="/" className="navbar-brand text-primary fw-bold"> {/* text-primary and fw-bold for branding */}
+        <Link to="/" className="navbar-brand text-primary fw-bold">
           Restaurant App
         </Link>
 
@@ -27,16 +28,23 @@ const Header = () => {
         </button>
 
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0"> {/* ms-auto pushes nav items to the right */}
+          <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
             <li className="nav-item">
               <Link to="/menu" className="nav-link">Menu</Link>
             </li>
 
-            <li className="nav-item position-relative"> {/* position-relative for the cart badge */}
+            {/* Conditionally render Dashboard link for admins */}
+            {isAdmin && ( // <--- Conditional rendering based on isAdmin
+              <li className="nav-item">
+                <Link to="/admin/dashboard" className="nav-link">Dashboard</Link>
+              </li>
+            )}
+
+            <li className="nav-item position-relative">
               <Link to="/cart" className="nav-link d-flex align-items-center">
                 Cart
                 {itemCount > 0 && (
-                  <span className="badge rounded-pill bg-primary ms-1"> {/* Bootstrap badge for count */}
+                  <span className="badge rounded-pill bg-primary ms-1">
                     {itemCount}
                   </span>
                 )}
@@ -44,14 +52,14 @@ const Header = () => {
             </li>
 
             {user ? (
-              <> {/* Use a React Fragment to group conditional elements */}
+              <>
                 <li className="nav-item">
                   <Link to="/my-orders" className="nav-link">My Orders</Link>
                 </li>
                 <li className="nav-item">
                   <button
                     onClick={logout}
-                    className="btn btn-link text-danger nav-link" // Use btn-link for a link-style button, text-danger for red
+                    className="btn btn-link text-danger nav-link"
                   >
                     Logout
                   </button>

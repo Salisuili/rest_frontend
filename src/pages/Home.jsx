@@ -14,12 +14,12 @@ const Home = () => {
           backgroundImage: "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/restaurant-hero.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          height: '500px', // Specific height, consider using vh units if truly responsive needed
+          height: '500px', 
         }}
       >
-        <div className="container text-center py-5"> {/* py-5 for top/bottom padding within hero */}
-          <h1 className="display-4 fw-bold mb-4">Welcome to Our Restaurant</h1> {/* display-4 for large text, fw-bold */}
-          <p className="lead mb-5">Delicious food delivered to your doorstep</p> {/* lead for larger paragraph text */}
+        <div className="container text-center py-5"> 
+          <h1 className="display-4 fw-bold mb-4">Welcome to Our Restaurant</h1> 
+          <p className="lead mb-5">Delicious food delivered to your doorstep</p> 
           <Link
             to="/menu"
             className="btn btn-warning btn-lg fw-bold px-5 py-3 rounded-3" // Bootstrap warning button (often orange-yellow), large size, bold, custom padding, more rounded
@@ -30,14 +30,14 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-5 bg-light"> {/* py-5 for vertical padding, bg-light for gray background */}
+      <section className="py-5 bg-light"> 
         <div className="container">
-          <h2 className="h2 fw-bold text-center mb-5">Why Choose Us</h2> {/* h2, bold, centered, mb-5 for spacing */}
-          <div className="row row-cols-1 row-cols-md-3 g-4"> {/* Bootstrap grid: 1 column on small, 3 on md+, g-4 for gutter */}
-            <div className="col"> {/* Column wrapper for each feature */}
-              <div className="card shadow-sm p-4 text-center h-100"> {/* Card with shadow, padding, centered text, full height */}
-                <div className="fs-1 mb-3">🍔</div> {/* fs-1 for larger emoji size */}
-                <h3 className="h5 fw-semibold mb-2">Fresh Ingredients</h3> {/* h5, semi-bold */}
+          <h2 className="h2 fw-bold text-center mb-5">Why Choose Us</h2> 
+          <div className="row row-cols-1 row-cols-md-3 g-4"> 
+            <div className="col"> 
+              <div className="card shadow-sm p-4 text-center h-100"> 
+                <div className="fs-1 mb-3">🍔</div> 
+                <h3 className="h5 fw-semibold mb-2">Fresh Ingredients</h3> 
                 <p className="card-text">We use only the freshest ingredients sourced from local farms</p>
               </div>
             </div>
@@ -60,22 +60,22 @@ const Home = () => {
       </section>
 
       {/* Popular Dishes */}
-      <section className="py-5"> {/* py-5 for vertical padding */}
+      <section className="py-5"> 
         <div className="container">
           <h2 className="h2 fw-bold text-center mb-5">Our Specialties</h2>
           <div className="row row-cols-1 row-cols-md-3 g-4">
             <div className="col">
-              <div className="card shadow-sm overflow-hidden h-100"> {/* Card with shadow, hidden overflow, full height */}
+              <div className="card shadow-sm overflow-hidden h-100"> 
                 <img
                   src="/dish1.jpg"
                   alt="Special Dish 1"
                   className="card-img-top"
-                  style={{ height: '12rem', objectFit: 'cover' }} // Specific height and object-fit
+                  style={{ height: '12rem', objectFit: 'cover' }} 
                 />
-                <div className="card-body"> {/* card-body for padding */}
+                <div className="card-body"> 
                   <h3 className="h5 fw-semibold mb-2">Jollof Rice with Chicken</h3>
                   <p className="card-text text-muted mb-3">Our signature dish with secret recipe</p>
-                  <Link to="/menu" className="link-warning fw-medium text-decoration-none"> {/* Link with warning color, no underline */}
+                  <Link to="/menu" className="link-warning fw-medium text-decoration-none"> 
                     View Details &rarr;
                   </Link>
                 </div>

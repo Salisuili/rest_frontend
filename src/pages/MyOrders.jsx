@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { getOrders } from '../api/orders';
+import { getOrders } from '../api/orderApi';
 import OrderCard from '../components/orders/OrderCard'; // Assuming this component is already Bootstrap-ready
 import LoadingSpinner from '../components/ui/LoadingSpinner'; // Assuming this component is already Bootstrap-ready
 
