@@ -7,7 +7,7 @@ import { createOrder, initiatePayment } from '../api/orderApi';
 import { getUserAddresses, addUserAddress } from '../api/userApi';
 import CartSummary from '../components/cart/CartSummary';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import { toast } from 'react-hot-toast';
+import { toast } from 'react-hot-toast'; // Ensure this is react-hot-toast
 
 const Checkout = () => {
   const { cartItems, clearCart } = useCart();
@@ -69,7 +69,8 @@ const Checkout = () => {
 
   if (cartItems.length === 0) {
     navigate('/menu');
-    toast.info("Your cart is empty. Please add items to proceed to checkout.");
+    // FIX: Changed toast.info to toast() as per react-hot-toast API
+    toast("Your cart is empty. Please add items to proceed to checkout.", { icon: 'ℹ️' });
     return null;
   }
 
