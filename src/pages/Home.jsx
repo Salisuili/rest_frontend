@@ -1,9 +1,52 @@
 // src/pages/Home.jsx
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getCategories } from '../api/categoryApi'; // Import getCategories
+import LoadingSpinner from '../components/ui/LoadingSpinner'; // Assuming you have a LoadingSpinner
+
+const API_URL = process.env.REACT_APP_API_URL; // Get API URL for image paths
+
+// Helper function to get an emoji based on category name
+const getCategoryEmoji = (categoryName) => {
+  switch (categoryName.toLowerCase()) {
+    case 'pizza': return '🍕';
+    case 'burgers': return '🍔';
+    case 'drinks': return '🥤';
+    case 'desserts': return '🍰';
+    case 'nigerian dishes': return '🍲';
+    case 'soups': return '🥣';
+    case 'swallow': return '🍚';
+    case 'rice': return '🍚'; // Corrected emoji for rice
+    case 'pasta': return '🍝';
+    case 'salads': return '🥗';
+    case 'breakfast': return '�';
+    default: return '🍽️'; // Default emoji
+  }
+};
 
 const Home = () => {
   const { user } = useAuth();
+  const [categories, setCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCategoriesData = async () => {
+      setLoadingCategories(true);
+      setError(null);
+      try {
+        const fetchedCategories = await getCategories();
+        setCategories(fetchedCategories);
+      } catch (err) {
+        console.error('Error fetching categories for Home page:', err);
+        setError('Failed to load categories.');
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+    fetchCategoriesData();
+  }, []);
 
   return (
     <>
@@ -14,15 +57,15 @@ const Home = () => {
           backgroundImage: "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/restaurant-hero.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          height: '500px', 
+          height: '500px',
         }}
       >
-        <div className="container text-center py-5"> 
-          <h1 className="display-4 fw-bold mb-4">Welcome to Our Restaurant</h1> 
-          <p className="lead mb-5">Delicious food delivered to your doorstep</p> 
+        <div className="container text-center py-5">
+          <h1 className="display-4 fw-bold mb-4">Welcome to Our Restaurant</h1>
+          <p className="lead mb-5">Delicious food delivered to your doorstep</p>
           <Link
             to="/menu"
-            className="btn btn-warning btn-lg fw-bold px-5 py-3 rounded-3" // Bootstrap warning button (often orange-yellow), large size, bold, custom padding, more rounded
+            className="btn btn-warning btn-lg fw-bold px-5 py-3 rounded-3"
           >
             Browse Menu
           </Link>
@@ -30,14 +73,14 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-5 bg-light"> 
+      <section className="py-5 bg-light">
         <div className="container">
-          <h2 className="h2 fw-bold text-center mb-5">Why Choose Us</h2> 
-          <div className="row row-cols-1 row-cols-md-3 g-4"> 
-            <div className="col"> 
-              <div className="card shadow-sm p-4 text-center h-100"> 
-                <div className="fs-1 mb-3">🍔</div> 
-                <h3 className="h5 fw-semibold mb-2">Fresh Ingredients</h3> 
+          <h2 className="h2 fw-bold text-center mb-5">Why Choose Us</h2>
+          <div className="row row-cols-1 row-cols-md-3 g-4">
+            <div className="col">
+              <div className="card shadow-sm p-4 text-center h-100">
+                <div className="fs-1 mb-3">🍔</div>
+                <h3 className="h5 fw-semibold mb-2">Fresh Ingredients</h3>
                 <p className="card-text">We use only the freshest ingredients sourced from local farms</p>
               </div>
             </div>
@@ -59,77 +102,73 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Popular Dishes */}
-      <section className="py-5"> 
+      {/* Our Specialties (Dynamic Categories) */}
+      <section className="py-5">
         <div className="container">
-          <h2 className="h2 fw-bold text-center mb-5">Our Specialties</h2>
-          <div className="row row-cols-1 row-cols-md-3 g-4">
-            <div className="col">
-              <div className="card shadow-sm overflow-hidden h-100"> 
-                <img
-                  src="/dish1.jpg"
-                  alt="Special Dish 1"
-                  className="card-img-top"
-                  style={{ height: '12rem', objectFit: 'cover' }} 
-                />
-                <div className="card-body"> 
-                  <h3 className="h5 fw-semibold mb-2">Jollof Rice with Chicken</h3>
-                  <p className="card-text text-muted mb-3">Our signature dish with secret recipe</p>
-                  <Link to="/menu" className="link-warning fw-medium text-decoration-none"> 
-                    View Details &rarr;
-                  </Link>
+          <h2 className="h2 fw-bold text-center mb-5">Explore Our Categories</h2>
+          {loadingCategories ? (
+            <LoadingSpinner />
+          ) : error ? (
+            <div className="alert alert-danger text-center">{error}</div>
+          ) : categories.length === 0 ? (
+            <div className="alert alert-info text-center">No categories available.</div>
+          ) : (
+            // FIX: Added justify-content-center to center cards when they don't fill the row
+            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center">
+              {categories.map(category => (
+                <div className="col" key={category.id}>
+                  <div className="card shadow-sm overflow-hidden h-100 rounded-lg">
+                    {category.image_url ? (
+                      <img
+                        src={`${API_URL}${category.image_url.startsWith('/uploads/') ? category.image_url : `/uploads/${category.image_url}`}`}
+                        alt={category.name}
+                        className="card-img-top object-cover"
+                        style={{ height: '12rem', objectFit: 'cover' }}
+                        onError={(e) => {
+                          e.target.onerror = null; // Prevent infinite loop
+                          e.target.src = 'https://placehold.co/400x300/e0e0e0/555555?text=No+Image'; // Fallback to a generic placeholder
+                        }}
+                      />
+                    ) : (
+                      <div
+                        className="d-flex flex-column justify-content-center align-items-center text-white p-3"
+                        style={{
+                          height: '12rem',
+                          background: 'linear-gradient(45deg, #FF6B6B, #FFD166)', // A vibrant gradient
+                          fontSize: '4rem', // Large emoji size
+                          borderRadius: '0.375rem 0.375rem 0 0', // Match card-img-top border-radius
+                          textAlign: 'center'
+                        }}
+                      >
+                        {getCategoryEmoji(category.name)}
+                        <span className="fs-6 fw-bold mt-2">{category.name}</span>
+                      </div>
+                    )}
+                    <div className="card-body d-flex flex-column">
+                      <h3 className="h5 fw-semibold mb-2">{category.name}</h3>
+                      <p className="card-text text-muted mb-3 flex-grow-1">
+                        {category.description || 'Explore delicious items in this category.'}
+                      </p>
+                      <Link to={`/menu?category=${category.id}`} className="link-warning fw-medium text-decoration-none mt-auto">
+                        View Items &rarr;
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-            {/* Repeat for other dishes - you'll add similar `col` divs here */}
-            {/* Example for a second dish: */}
-            <div className="col">
-              <div className="card shadow-sm overflow-hidden h-100">
-                <img
-                  src="/dish2.jpg" // Assuming you have dish2.jpg
-                  alt="Special Dish 2"
-                  className="card-img-top"
-                  style={{ height: '12rem', objectFit: 'cover' }}
-                />
-                <div className="card-body">
-                  <h3 className="h5 fw-semibold mb-2">Amala and Ewedu</h3>
-                  <p className="card-text text-muted mb-3">A traditional local delicacy</p>
-                  <Link to="/menu" className="link-warning fw-medium text-decoration-none">
-                    View Details &rarr;
-                  </Link>
-                </div>
-              </div>
-            </div>
-            {/* Example for a third dish: */}
-            <div className="col">
-              <div className="card shadow-sm overflow-hidden h-100">
-                <img
-                  src="/dish3.jpg" // Assuming you have dish3.jpg
-                  alt="Special Dish 3"
-                  className="card-img-top"
-                  style={{ height: '12rem', objectFit: 'cover' }}
-                />
-                <div className="card-body">
-                  <h3 className="h5 fw-semibold mb-2">Grilled Fish with Fries</h3>
-                  <p className="card-text text-muted mb-3">Perfectly grilled for a healthy choice</p>
-                  <Link to="/menu" className="link-warning fw-medium text-decoration-none">
-                    View Details &rarr;
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </section>
 
       {/* Call to Action */}
-      <section className="py-5 bg-warning text-white"> {/* py-5, bg-warning (often maps to orange), white text */}
+      <section className="py-5 bg-warning text-white">
         <div className="container text-center">
           <h2 className="h2 fw-bold mb-4">Ready to order?</h2>
           {user ? (
             <Link
               to="/menu"
-              className="btn btn-light btn-lg fw-bold px-5 py-3 rounded-3" // Light button for contrast, large, bold, padding, rounded
+              className="btn btn-light btn-lg fw-bold px-5 py-3 rounded-3"
             >
               Order Now
             </Link>
@@ -137,13 +176,13 @@ const Home = () => {
             <div>
               <Link
                 to="/register"
-                className="btn btn-light btn-lg fw-bold px-5 py-3 rounded-3 me-3" // Light button, spacing on right
+                className="btn btn-light btn-lg fw-bold px-5 py-3 rounded-3 me-3"
               >
                 Sign Up
               </Link>
               <Link
                 to="/menu"
-                className="btn btn-outline-light btn-lg fw-bold px-5 py-3 rounded-3" // Outlined light button
+                className="btn btn-outline-light btn-lg fw-bold px-5 py-3 rounded-3"
               >
                 Browse as Guest
               </Link>

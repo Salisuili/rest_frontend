@@ -1,80 +1,80 @@
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; // Make sure this path is correct
-import { useCart } from '../../context/CartContext'; // Make sure this path is correct
+// frontend/src/components/ui/Header.jsx
+import React from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext'; // Import useCart to get cart count
+import { toast } from 'react-hot-toast';
 
-const Header = () => {
-  // Destructure 'isAdmin' from useAuth()
-  const { user, logout, isAdmin } = useAuth(); // <--- ADD isAdmin HERE
-  const { itemCount } = useCart();
+export default function Header() {
+  const { user, isAuthenticated, logout } = useAuth();
+  const { cartItemCount } = useCart(); // Get cartItemCount from CartContext
+
+  const handleLogout = () => {
+    logout();
+    toast.success('Logged out successfully!');
+  };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-      <div className="container">
-        <Link to="/" className="navbar-brand text-primary fw-bold">
-          Restaurant App
+    <header className="bg-warning text-white py-3 shadow-sm">
+      <div className="container d-flex justify-content-between align-items-center">
+        {/* Logo/Brand */}
+        <Link to="/" className="text-white text-decoration-none fs-4 fw-bold">
+          Tripple S Restaurant 
         </Link>
 
-        {/* Navbar Toggler for mobile */}
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+        {/* Navigation Links */}
+        <nav className="d-flex align-items-center">
+          <ul className="nav me-3">
             <li className="nav-item">
-              <Link to="/menu" className="nav-link">Menu</Link>
+              <NavLink to="/" className="nav-link text-white" end>Home</NavLink>
             </li>
-
-            {/* Conditionally render Dashboard link for admins */}
-            {isAdmin && ( // <--- Conditional rendering based on isAdmin
-              <li className="nav-item">
-                <Link to="/admin/dashboard" className="nav-link">Dashboard</Link>
-              </li>
-            )}
-
-            <li className="nav-item position-relative">
-              <Link to="/cart" className="nav-link d-flex align-items-center">
+            <li className="nav-item">
+              <NavLink to="/menu" className="nav-link text-white">Menu</NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink to="/cart" className="nav-link text-white position-relative">
                 Cart
-                {itemCount > 0 && (
-                  <span className="badge rounded-pill bg-primary ms-1">
-                    {itemCount}
+                {cartItemCount > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {cartItemCount}
+                    <span className="visually-hidden">cart items</span>
                   </span>
                 )}
-              </Link>
+              </NavLink>
             </li>
-
-            {user ? (
-              <>
-                <li className="nav-item">
-                  <Link to="/my-orders" className="nav-link">My Orders</Link>
-                </li>
-                <li className="nav-item">
-                  <button
-                    onClick={logout}
-                    className="btn btn-link text-danger nav-link"
-                  >
-                    Logout
-                  </button>
-                </li>
-              </>
-            ) : (
+            {isAuthenticated && user?.role === 'admin' && (
               <li className="nav-item">
-                <Link to="/login" className="nav-link">Login</Link>
+                <NavLink to="/admin/dashboard" className="nav-link text-white">Admin</NavLink>
               </li>
             )}
           </ul>
-        </div>
-      </div>
-    </nav>
-  );
-};
 
-export default Header;
+          {/* Auth Buttons/User Info */}
+          {isAuthenticated ? (
+            <div className="dropdown">
+              <button
+                className="btn btn-outline-light dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Hi, {user?.full_name || user?.email || 'User'}
+              </button>
+              <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                <li><Link to="/my-orders" className="dropdown-item">My Orders</Link></li>
+                <li><hr className="dropdown-divider" /></li>
+                <li><button onClick={handleLogout} className="dropdown-item btn btn-danger">Logout</button></li>
+              </ul>
+            </div>
+          ) : (
+            <div>
+              <Link to="/login" className="btn btn-outline-light me-2">Login</Link>
+              <Link to="/register" className="btn btn-light">Register</Link>
+            </div>
+          )}
+        </nav>
+      </div>
+    </header>
+  );
+}
