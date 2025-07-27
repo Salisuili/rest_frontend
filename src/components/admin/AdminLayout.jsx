@@ -28,9 +28,20 @@ const AdminLayout = () => {
         onClick={toggleOffcanvas}
         aria-controls="adminOffcanvas"
         aria-label="Toggle navigation"
-        style={{ zIndex: 1050 }}
+        style={{ 
+          zIndex: 1050,
+          width: '40px',
+          height: '40px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
       >
-        <span className="navbar-toggler-icon"></span>
+        <span className="navbar-toggler-icon d-flex flex-column justify-content-between">
+          <span className="bg-white" style={{height: '2px', width: '100%'}}></span>
+          <span className="bg-white" style={{height: '2px', width: '100%'}}></span>
+          <span className="bg-white" style={{height: '2px', width: '100%'}}></span>
+        </span>
       </button>
 
       {/* Sidebar - Desktop only */}
@@ -43,8 +54,18 @@ const AdminLayout = () => {
           top: 0,
         }}
       >
-        <h3 className="mb-4 text-center">Admin Panel</h3>
+        <Link to="/" className="text-decoration-none text-white">
+          <h3 className="mb-4 text-center">Admin Panel</h3>
+        </Link>
         <ul className="nav nav-pills flex-column mb-auto">
+          <li className="nav-item">
+            <Link 
+              to="/" 
+              className={`nav-link text-white`}
+            >
+              Home
+            </Link>
+          </li>
           <li className="nav-item">
             <Link 
               to="/admin/dashboard" 
@@ -100,7 +121,9 @@ const AdminLayout = () => {
         }}
       >
         <div className="offcanvas-header">
-          <h3 className="offcanvas-title" id="adminOffcanvasLabel">Admin Panel</h3>
+          <Link to="/admin" className="text-decoration-none text-white" onClick={toggleOffcanvas}>
+            <h3 className="offcanvas-title" id="adminOffcanvasLabel">Admin Panel</h3>
+          </Link>
           <button
             type="button"
             className="btn-close btn-close-white text-reset"
@@ -110,6 +133,15 @@ const AdminLayout = () => {
         </div>
         <div className="offcanvas-body p-0">
           <ul className="nav flex-column">
+            <li className="nav-item">
+              <Link 
+                to="/" 
+                className={`nav-link text-white `}
+                onClick={toggleOffcanvas}
+              >
+                Home
+              </Link>
+            </li>
             <li className="nav-item">
               <Link 
                 to="/admin/dashboard" 
@@ -166,16 +198,12 @@ const AdminLayout = () => {
           marginLeft: '0',
           width: '100%',
           transition: 'margin 0.3s ease',
-        }}
-      >
-        <div style={{
-          marginLeft: '0',
-          '@media (min-width: 768px)': {
+          '@media (minWidth: 768px)': {
             marginLeft: '250px'
           }
-        }}>
-          <Outlet />
-        </div>
+        }}
+      >
+        <Outlet />
       </main>
     </div>
   );

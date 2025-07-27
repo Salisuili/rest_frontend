@@ -1,189 +1,210 @@
-// frontend/src/admin/pages/Orders.jsx
-import React, { useEffect, useState } from 'react';
-import axios from 'axios'; // Directly import axios
+// frontend/src/pages/admin/Orders.jsx
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getAllOrders, updateOrderStatus } from '../../api/orderApi'; // Assuming getAllOrders and updateOrderStatus are here
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { toast } from 'react-hot-toast';
+import { formatCurrency } from '../../utils/helpers'; 
 import { Link } from 'react-router-dom';
 
-// Define API_URL and getAuthHeaders directly in this file
-// REACT_APP_API_URL is expected to be http://localhost:5000 or your base Render URL
-const API_URL = process.env.REACT_APP_API_URL; 
-
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-  return headers;
-};
-
 const AdminOrders = () => {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState([]); // FIX: Initialize as an empty array
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all'); // State for status filter
+  const [searchTerm, setSearchTerm] = useState(''); // State for search term
+  const navigate = useNavigate();
 
-  const fetchOrders = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      // FIX: Added '/api' prefix to the endpoint path
-      const response = await axios.get(`${API_URL}/api/orders`, { 
-        headers: getAuthHeaders(),
-      });
-      setOrders(response.data);
-    } catch (err) {
-      console.error('Error fetching admin orders:', err.response?.data?.error || err.message);
-      setError(err.response?.data?.error || 'Failed to load orders.');
-      toast.error(err.response?.data?.error || 'Failed to load orders.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Define valid statuses for dropdown and badge styling
+  const validStatuses = [
+    'all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded',
+    'payment_pending', 'payment_failed', 'payment_discrepancy', 'payment_reversed'
+  ];
 
   useEffect(() => {
+    const fetchOrders = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await getAllOrders();
+        setOrders(data || []); // FIX: Ensure data is an array, even if API returns null/undefined
+      } catch (err) {
+        console.error('Error fetching orders:', err);
+        setError(err.response?.data?.error || 'Failed to load orders.');
+        toast.error(err.response?.data?.error || 'Failed to load orders.');
+        setOrders([]); // FIX: Set to empty array on error to prevent filter issues
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchOrders();
-  }, []);
+  }, []); // Empty dependency array means this runs once on mount
 
+  // Function to handle status update from the table
   const handleStatusChange = async (orderId, newStatus) => {
+    if (!window.confirm(`Are you sure you want to change status of Order ${orderId.substring(0, 8)} to "${newStatus}"?`)) {
+      return; // User cancelled
+    }
     try {
-      // FIX: Added '/api' prefix to the endpoint path
-      await axios.put(`${API_URL}/api/orders/${orderId}/status`, { status: newStatus }, { 
-        headers: getAuthHeaders(),
-      });
-      // Update the status in the local state
-      setOrders(prevOrders =>
-        prevOrders.map(order =>
-          order.id === orderId ? { ...order, status: newStatus } : order
-        )
-      );
-      toast.success(`Order ${orderId.substring(0, 8)}... status updated to ${newStatus}!`);
+      // Optimistic update
+      setOrders(prevOrders => prevOrders.map(order =>
+        order.id === orderId ? { ...order, status: newStatus } : order
+      ));
+      await updateOrderStatus(orderId, newStatus);
+      toast.success(`Order ${orderId.substring(0, 8)} status updated to "${newStatus}"!`);
     } catch (err) {
-      console.error('Error updating order status:', err.response?.data?.error || err.message);
+      console.error('Error updating order status:', err);
       toast.error(err.response?.data?.error || 'Failed to update order status.');
+      // Revert optimistic update on error
+      setOrders(prevOrders => prevOrders.map(order =>
+        order.id === orderId ? { ...order, status: prevOrders.find(o => o.id === orderId).status } : order
+      ));
     }
   };
 
-  const filteredOrders = orders.filter(order => {
-    if (filterStatus === 'all') {
-      return true;
-    }
-    return order.status === filterStatus;
+  // Filtered orders logic
+  const filteredOrders = (orders || []).filter(order => { // FIX: Ensure 'orders' is an array before filtering (Line 70 equivalent)
+    const matchesStatus = filterStatus === 'all' || order.status === filterStatus;
+    const matchesSearch = searchTerm === '' ||
+                          order.order_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          order.users?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          order.users?.email?.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesStatus && matchesSearch;
   });
+
+  const getStatusBadgeClass = (status) => {
+    switch (status) {
+      case 'pending':
+      case 'payment_pending':
+        return 'bg-warning text-dark';
+      case 'processing':
+        return 'bg-info text-dark';
+      case 'shipped':
+        return 'bg-primary';
+      case 'delivered':
+        return 'bg-success';
+      case 'cancelled':
+      case 'payment_failed':
+      case 'payment_reversed':
+        return 'bg-danger';
+      case 'refunded':
+        return 'bg-secondary';
+      default:
+        return 'bg-secondary';
+    }
+  };
 
   if (loading) {
     return <LoadingSpinner />;
   }
 
   if (error) {
-    return (
-      <div className="container mt-4">
-        <div className="alert alert-danger" role="alert">
-          {error}
-        </div>
-      </div>
-    );
+    return <div className="alert alert-danger" role="alert">{error}</div>;
   }
 
   return (
-    <div className="container-fluid mt-4">
-      <h2 className="mb-4">Order Management</h2>
+    <div className="container py-5">
+      <h2 className="mb-4">All Orders</h2>
 
-      <div className="mb-3">
-        <label htmlFor="statusFilter" className="form-label">Filter by Status:</label>
-        <select
-          id="statusFilter"
-          className="form-select w-auto"
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-        >
-          <option value="all">All Statuses</option>
-          <option value="pending">Pending</option>
-          <option value="processing">Processing</option>
-          <option value="shipped">Shipped</option>
-          <option value="delivered">Delivered</option>
-          <option value="cancelled">Cancelled</option>
-          <option value="payment_pending">Payment Pending</option>
-          <option value="payment_failed">Payment Failed</option>
-          <option value="payment_discrepancy">Payment Discrepancy</option>
-          <option value="payment_reversed">Payment Reversed</option>
-          {/* Add other statuses as defined in your backend */}
-        </select>
+      {/* Filters and Search */}
+      <div className="row mb-4 g-3">
+        <div className="col-md-4">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search by Order ID, Customer Name, Email..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="col-md-4">
+          <select
+            className="form-select"
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+          >
+            {validStatuses.map(status => (
+              <option key={status} value={status}>
+                {status.charAt(0).toUpperCase() + status.slice(1).replace(/_/g, ' ')}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      {filteredOrders.length === 0 ? (
-        <div className="alert alert-info" role="alert">
-          No orders found for the selected filter.
+      <div className="card shadow-sm">
+        <div className="card-header">
+          <h3 className="h5 mb-0">Order List ({filteredOrders.length} found)</h3>
         </div>
-      ) : (
-        <div className="table-responsive">
-          <table className="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th>Order #</th>
-                <th>Customer</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Payment Status</th>
-                <th>Order Date</th>
-                <th>Delivery Address</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredOrders.map(order => (
-                <tr key={order.id}>
-                  <td>{order.order_number}</td>
-                  <td>{order.users?.full_name || 'N/A'} ({order.users?.email || 'N/A'})</td>
-                  <td>₦{order.total_amount.toFixed(2)}</td>
-                  <td>
-                    <select
-                      className={`form-select form-select-sm ${
-                        order.status === 'pending' ? 'bg-warning text-dark' :
-                        order.status === 'processing' ? 'bg-info text-dark' :
-                        order.status === 'shipped' ? 'bg-primary text-white' :
-                        order.status === 'delivered' ? 'bg-success text-white' :
-                        order.status === 'cancelled' ? 'bg-danger text-white' : 'bg-secondary text-white'
-                      }`}
-                      value={order.status}
-                      onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                      disabled={loading}
-                    >
-                      <option value="pending">Pending</option>
-                      <option value="processing">Processing</option>
-                      <option value="shipped">Shipped</option>
-                      <option value="delivered">Delivered</option>
-                      <option value="cancelled">Cancelled</option>
-                      <option value="payment_pending">Payment Pending</option>
-                      <option value="payment_failed">Payment Failed</option>
-                      <option value="payment_discrepancy">Payment Discrepancy</option>
-                      <option value="payment_reversed">Payment Reversed</option>
-                    </select>
-                  </td>
-                  <td>
-                    <span className={`badge ${
-                      order.payment_status === 'pending' || order.payment_status === 'initiated' ? 'bg-warning text-dark' :
-                      order.payment_status === 'paid' ? 'bg-success' :
-                      order.payment_status === 'failed' ? 'bg-danger' : 'bg-secondary'
-                    }`}>
-                      {order.payment_status?.replace(/_/g, ' ') || 'N/A'}
-                    </span>
-                  </td>
-                  <td>{new Date(order.created_at).toLocaleDateString()}</td>
-                  <td>
-                    <Link to={`/admin/orders/${order.id}`} className="btn btn-sm btn-outline-info">
-                      View
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="card-body">
+          {filteredOrders.length === 0 ? (
+            <div className="alert alert-info" role="alert">
+              No orders found matching your criteria.
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="table table-striped table-hover align-middle">
+                <thead>
+                  <tr>
+                    <th>Order #</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredOrders.map(order => (
+                    <tr key={order.id}>
+                      <td>
+                        <Link to={`/admin/orders/${order.id}`} className="text-decoration-none fw-bold">
+                          {order.order_number || order.id.substring(0, 8)}
+                        </Link>
+                      </td>
+                      <td>{order.users?.full_name || 'N/A'}</td>
+                      <td>{formatCurrency(order.total_amount)}</td>
+                      <td>
+                        <span className={`badge ${getStatusBadgeClass(order.status)}`}>
+                          {order.status?.replace(/_/g, ' ')}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={`badge ${getStatusBadgeClass(order.payment_status)}`}>
+                          {order.payment_status?.replace(/_/g, ' ')}
+                        </span>
+                      </td>
+                      <td>{order.is_pickup ? 'Pickup' : 'Delivery'}</td>
+                      <td>{new Date(order.created_at).toLocaleDateString('en-US')}</td>
+                      <td>
+                        <div className="d-flex align-items-center">
+                          <Link to={`/admin/orders/${order.id}`} className="btn btn-sm btn-outline-primary me-2">
+                            View
+                          </Link>
+                          <select
+                            className="form-select form-select-sm"
+                            value={order.status} // Bind to individual order's status
+                            onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                            disabled={loading}
+                          >
+                            {validStatuses.filter(s => s !== 'all').map(status => ( // Exclude 'all' from update options
+                              <option key={status} value={status}>
+                                {status.replace(/_/g, ' ')}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };
