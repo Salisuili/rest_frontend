@@ -352,7 +352,8 @@ const Checkout = () => {
                     </div>
                     <div className="d-flex justify-content-between">
                       <span>Delivery Fee:</span>
-                      <span>{calculatedDeliveryFee === 0 ? 'FREE' : `₦${calculatedDeliveryDeliveryFee.toFixed(2)}`}</span>
+                      {/* FIX: Corrected typo from calculatedDeliveryDeliveryFee to calculatedDeliveryFee */}
+                      <span>{calculatedDeliveryFee === 0 ? 'FREE' : `₦${calculatedDeliveryFee.toFixed(2)}`}</span>
                     </div>
                     <div className="border-top pt-3 d-flex justify-content-between fw-bold fs-5">
                       <span>Grand Total:</span>
