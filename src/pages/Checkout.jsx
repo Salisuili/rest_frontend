@@ -1,18 +1,19 @@
 // frontend/src/pages/Checkout.jsx
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { createOrder, initiatePayment } from '../api/orderApi';
 import { getUserAddresses, addUserAddress } from '../api/userApi';
-import CartSummary from '../components/cart/CartSummary'; // Assuming CartSummary might be updated or removed
+import CartSummary from '../components/cart/CartSummary';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import { toast } from 'react-hot-toast'; // Ensure this is react-hot-toast
+import { toast } from 'react-hot-toast';
 
 const Checkout = () => {
-  const { cartItems, clearCart, cartTotal } = useCart(); // Get cartTotal from CartContext
+  const { cartItems, clearCart, cartTotal } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation(); // Get current location
 
   const [formData, setFormData] = useState({
     selectedAddressId: '',
@@ -23,19 +24,31 @@ const Checkout = () => {
     newCountry: 'Nigeria',
     deliveryNotes: '',
     paymentMethod: 'paystack',
-    deliveryOption: 'delivery' // New state: 'delivery' or 'pickup'
+    deliveryOption: 'delivery'
   });
 
   const [userAddresses, setUserAddresses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [addressLoading, setAddressLoading] = useState(true);
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
-  const [calculatedDeliveryFee, setCalculatedDeliveryFee] = useState(0); // State to hold calculated delivery fee
+  const [calculatedDeliveryFee, setCalculatedDeliveryFee] = useState(0);
 
   // --- ALL HOOK CALLS GO HERE, BEFORE ANY CONDITIONAL RETURNS ---
+
+  // Effect to handle redirection if user is not logged in
+  useEffect(() => {
+    if (!user) {
+      // Store the current path in local storage before redirecting
+      localStorage.setItem('redirectAfterLogin', location.pathname + location.search);
+      navigate('/login');
+      // No need to return null here, as the component will re-render when user logs in
+      // and the `user` state updates.
+    }
+  }, [user, navigate, location]); // Depend on user, navigate, and location
+
   useEffect(() => {
     const fetchAddresses = async () => {
-      if (user) {
+      if (user) { // Only attempt to fetch addresses if user is logged in
         setAddressLoading(true);
         try {
           const addresses = await getUserAddresses();
@@ -54,7 +67,7 @@ const Checkout = () => {
           setAddressLoading(false);
         }
       } else {
-        setAddressLoading(false);
+        setAddressLoading(false); // If user is not present, clear loading state
       }
     };
     fetchAddresses();
@@ -79,9 +92,10 @@ const Checkout = () => {
 
 
   // --- Early returns now come AFTER all hook calls ---
+  // If user is null (meaning they are not logged in and the redirect has been initiated),
+  // we can render a loading state or nothing, as the navigation will take over.
   if (!user) {
-    navigate('/login');
-    return null;
+    return <LoadingSpinner message="Redirecting to login..." />; // Or simply return null;
   }
 
   if (cartItems.length === 0) {
@@ -149,10 +163,9 @@ const Checkout = () => {
           quantity: item.quantity,
           special_instructions: item.special_instructions || null
         })),
-        // Only include address_id if delivery is selected
         address_id: formData.deliveryOption === 'delivery' ? formData.selectedAddressId : null,
         delivery_notes: formData.deliveryNotes,
-        is_pickup: formData.deliveryOption === 'pickup' // Pass this flag to the backend
+        is_pickup: formData.deliveryOption === 'pickup'
       };
 
       const order = await createOrder(orderPayload);
@@ -238,7 +251,7 @@ const Checkout = () => {
                           className="form-select"
                           value={formData.selectedAddressId}
                           onChange={handleFormChange}
-                          required={formData.deliveryOption === 'delivery'} // Required only for delivery
+                          required={formData.deliveryOption === 'delivery'}
                           disabled={loading}
                         >
                           <option value="">Select an address</option>
@@ -339,7 +352,7 @@ const Checkout = () => {
                     </div>
                     <div className="d-flex justify-content-between">
                       <span>Delivery Fee:</span>
-                      <span>{calculatedDeliveryFee === 0 ? 'FREE' : `₦${calculatedDeliveryFee.toFixed(2)}`}</span>
+                      <span>{calculatedDeliveryFee === 0 ? 'FREE' : `₦${calculatedDeliveryDeliveryFee.toFixed(2)}`}</span>
                     </div>
                     <div className="border-top pt-3 d-flex justify-content-between fw-bold fs-5">
                       <span>Grand Total:</span>
