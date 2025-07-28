@@ -112,12 +112,12 @@ const MenuItems = () => {
                         >
                           {item.is_available ? 'Disable' : 'Enable'}
                         </button>
-                        <Link 
+                        {/* <Link 
                           to={`/admin/menu/${item.id}/edit`}
                           className="btn btn-sm btn-outline-secondary me-2"
                         >
                           Edit
-                        </Link>
+                        </Link> */}
                         <button 
                           className="btn btn-sm btn-outline-danger"
                           onClick={() => handleDeleteMenuItem(item.id, item.name)}

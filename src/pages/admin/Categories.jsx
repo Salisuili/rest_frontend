@@ -78,12 +78,12 @@ const Categories = () => {
                         ) : 'No Image'}
                       </td>
                       <td>
-                        <Link 
+                        {/* <Link 
                           to={`/admin/categories/${category.id}/edit`} 
                           className="btn btn-sm btn-outline-secondary me-2"
                         >
                           Edit
-                        </Link>
+                        </Link> */}
                         <button className="btn btn-sm btn-outline-danger">
                           Delete
                         </button>
