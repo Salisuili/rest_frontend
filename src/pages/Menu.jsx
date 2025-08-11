@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { getCategories, getMenuItems } from '../api/menu';
-import MenuItemCard from '../components/menu/MenuItemCard'; 
-import CategoryFilter from '../components/menu/CategoryFilter'; 
-import LoadingSpinner from '../components/ui/LoadingSpinner'; 
+import MenuItemCard from '../components/menu/MenuItemCard';
+import CategoryFilter from '../components/menu/CategoryFilter';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
+import useDebounce from '../hooks/useDebounce'; 
+import { toast } from 'react-hot-toast'; 
 
 const Menu = () => {
   const [categories, setCategories] = useState([]);
@@ -11,42 +13,51 @@ const Menu = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
 
+  
+  const debouncedSearchTerm = useDebounce(searchTerm, 1000);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [cats, items] = await Promise.all([
           getCategories(),
-          getMenuItems()
+          getMenuItems() 
         ]);
         setCategories(cats);
         setMenuItems(items);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        // Optionally, show a toast error here
+        console.error('Error fetching initial data:', error);
+        toast.error('Failed to load menu data. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, []); // Empty dependency array means this runs once on mount
 
+  // Effect to fetch filtered items based on selected category or debounced search term
   useEffect(() => {
     const fetchFilteredItems = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-        const items = await getMenuItems(selectedCategory, searchTerm);
+        // Pass selectedCategory and debouncedSearchTerm to the API call
+        const items = await getMenuItems(selectedCategory, debouncedSearchTerm);
         setMenuItems(items);
       } catch (error) {
         console.error('Error filtering items:', error);
-        // Optionally, show a toast error here
+        toast.error('Failed to filter menu items.');
       } finally {
         setLoading(false);
       }
     };
-    fetchFilteredItems();
-  }, [selectedCategory, searchTerm]);
 
-  // Display a loading spinner while data is being fetched
+    // Only fetch if initial loading is done, or if search/filter terms change
+    // This prevents fetching on initial component mount if initial data is already fetched
+    if (!loading || debouncedSearchTerm !== '' || selectedCategory !== null) {
+      fetchFilteredItems();
+    }
+  }, [selectedCategory, debouncedSearchTerm]); // Trigger when these values change
+
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center min-vh-100">
@@ -56,9 +67,9 @@ const Menu = () => {
   }
 
   return (
-    <div className="container py-5"> {/* Bootstrap container with vertical padding */}
-      <div className="row g-4"> {/* Bootstrap row with gutters for main layout */}
-        <div className="col-md-3"> {/* Takes 1/4 width on medium screens and up */}
+    <div className="container py-5">
+      <div className="row g-4">
+        <div className="col-md-3">
           <CategoryFilter
             categories={categories}
             selectedCategory={selectedCategory}
@@ -66,25 +77,25 @@ const Menu = () => {
           />
         </div>
 
-        <div className="col-md-9"> {/* Takes 3/4 width on medium screens and up */}
-          <div className="mb-4"> {/* Margin bottom for search input */}
+        <div className="col-md-9">
+          <div className="mb-4">
             <input
               type="text"
               placeholder="Search menu items..."
-              className="form-control form-control-lg" // Bootstrap form control for input, larger size
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              className="form-control form-control-lg"
+              value={searchTerm} // Input value directly controlled by searchTerm
+              onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm on every keystroke
             />
           </div>
 
-          <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4"> {/* Responsive grid for menu items */}
+          <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
             {menuItems.length === 0 ? (
               <div className="col-12 text-center py-5">
                 <p className="lead text-muted">No items found matching your criteria.</p>
               </div>
             ) : (
               menuItems.map(item => (
-                <div className="col" key={item.id}> {/* Column for each MenuItemCard */}
+                <div className="col" key={item.id}>
                   <MenuItemCard item={item} />
                 </div>
               ))
