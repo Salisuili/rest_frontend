@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react'; // Keep useState and useEffect if needed for other purposes, though not directly for this change
+import { useState, useEffect } from 'react'; 
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
-import { formatCurrency } from '../utils/helpers'; // Assuming this helper is still available
+import { formatCurrency } from '../utils/helpers'; 
 
 export default function Cart() {
   const {
     cartItems,
     removeFromCart,
     updateQuantity,
-    cartTotal, // cartTotal is still needed for subtotal
-    cartItemCount, // Use cartItemCount from context
+    cartTotal, 
+    cartItemCount, 
     clearCart
   } = useCart();
 
@@ -45,7 +45,7 @@ export default function Cart() {
                      style={{ gridTemplateColumns: '5fr 2fr 3fr 2fr' }}>
                   <div className="d-flex align-items-center me-3">
                     <img
-                      src={item.image_url || '/placeholder-food.jpg'} // Ensure this path is correct or use a full URL
+                      src={item.image_url || '/placeholder-food.jpg'} 
                       alt={item.name}
                       className="rounded me-3"
                       style={{ width: '5rem', height: '5rem', objectFit: 'cover' }}
@@ -114,11 +114,11 @@ export default function Cart() {
 
               <div className="d-grid gap-3 mb-4">
                 <div className="d-flex justify-content-between">
-                  <span>Items ({cartItemCount}):</span> {/* Use cartItemCount from context */}
+                  <span>Items ({cartItemCount}):</span> 
                   <span>{formatCurrency(cartTotal)}</span>
                 </div>
 
-                {/* Removed Delivery Fee display from Cart.jsx */}
+                
                 <div className="border-top pt-3 d-flex justify-content-between fw-bold fs-5">
                   <span>Subtotal:</span>
                   <span>{formatCurrency(cartTotal)}</span>

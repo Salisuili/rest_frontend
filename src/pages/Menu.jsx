@@ -33,9 +33,8 @@ const Menu = () => {
       }
     };
     fetchData();
-  }, []); // Empty dependency array means this runs once on mount
+  }, []); 
 
-  // Effect to fetch filtered items based on selected category or debounced search term
   useEffect(() => {
     const fetchFilteredItems = async () => {
       setLoading(true);
@@ -51,12 +50,10 @@ const Menu = () => {
       }
     };
 
-    // Only fetch if initial loading is done, or if search/filter terms change
-    // This prevents fetching on initial component mount if initial data is already fetched
     if (!loading || debouncedSearchTerm !== '' || selectedCategory !== null) {
       fetchFilteredItems();
     }
-  }, [selectedCategory, debouncedSearchTerm]); // Trigger when these values change
+  }, [selectedCategory, debouncedSearchTerm]); 
 
   if (loading) {
     return (
@@ -83,8 +80,8 @@ const Menu = () => {
               type="text"
               placeholder="Search menu items..."
               className="form-control form-control-lg"
-              value={searchTerm} // Input value directly controlled by searchTerm
-              onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm on every keystroke
+              value={searchTerm} 
+              onChange={(e) => setSearchTerm(e.target.value)} 
             />
           </div>
 

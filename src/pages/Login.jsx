@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
+import { toast } from 'react-hot-toast'; // This import is correct!
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -16,19 +16,30 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const result = await login({ email, password }); 
+      const result = await login({ email, password });
 
+      // Ensure your login function in AuthContext returns an object like { success: true } or { success: false, error: '...' }
       if (result.success) {
         toast.success('Login successful!');
         setEmail('');
         setPassword('');
-        navigate('/');
+        
+        // Check for a redirect path stored by the Checkout page
+        const redirectPath = localStorage.getItem('redirectAfterLogin');
+        if (redirectPath) {
+          localStorage.removeItem('redirectAfterLogin'); // Clean up
+          navigate(redirectPath); // Redirect to the original path (e.g., /checkout)
+        } else {
+          navigate('/'); // Default redirect to home
+        }
+
       } else {
         toast.error(result.error || 'Login failed');
       }
     } catch (error) {
       console.error('Login process error:', error); // Log client-side errors
-      toast.error('An unexpected error occurred during login.');
+      // You can refine this message if your AuthContext's login function throws specific errors
+      toast.error(error.message || 'An unexpected error occurred during login.');
     } finally {
       setLoading(false);
     }

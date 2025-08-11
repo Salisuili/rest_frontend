@@ -1,6 +1,6 @@
 // frontend/src/pages/Checkout.jsx
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
+import { useNavigate, useLocation } from 'react-router-dom'; 
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { createOrder, initiatePayment } from '../api/orderApi';
@@ -13,7 +13,7 @@ const Checkout = () => {
   const { cartItems, clearCart, cartTotal } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation(); // Get current location
+  const location = useLocation(); 
 
   const [formData, setFormData] = useState({
     selectedAddressId: '',
@@ -79,7 +79,6 @@ const Checkout = () => {
     if (formData.deliveryOption === 'delivery' && formData.selectedAddressId) {
       const selectedAddress = userAddresses.find(addr => addr.id === formData.selectedAddressId);
       if (selectedAddress) {
-        // Apply your delivery fee logic here, consistent with backend
         if (selectedAddress.city.toLowerCase() === 'zaria') {
           fee = cartTotal >= 5000 ? 0 : 500;
         } else {
@@ -91,11 +90,8 @@ const Checkout = () => {
   }, [formData.deliveryOption, formData.selectedAddressId, userAddresses, cartTotal]);
 
 
-  // --- Early returns now come AFTER all hook calls ---
-  // If user is null (meaning they are not logged in and the redirect has been initiated),
-  // we can render a loading state or nothing, as the navigation will take over.
   if (!user) {
-    return <LoadingSpinner message="Redirecting to login..." />; // Or simply return null;
+    return <LoadingSpinner message="Redirecting to login..." />; 
   }
 
   if (cartItems.length === 0) {
@@ -103,8 +99,6 @@ const Checkout = () => {
     toast("Your cart is empty. Please add items to proceed to checkout.", { icon: 'ℹ️' });
     return null;
   }
-
-  // --- Rest of your component logic and JSX ---
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
