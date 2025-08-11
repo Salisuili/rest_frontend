@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getCategories } from '../api/categoryApi'; // Import getCategories
-import LoadingSpinner from '../components/ui/LoadingSpinner'; // Assuming you have a LoadingSpinner
+import { getCategories } from '../api/categoryApi'; 
+import LoadingSpinner from '../components/ui/LoadingSpinner'; 
 
 const API_URL = process.env.REACT_APP_API_URL; // Get API URL for image paths
 
@@ -17,11 +17,11 @@ const getCategoryEmoji = (categoryName) => {
     case 'nigerian dishes': return '🍲';
     case 'soups': return '🥣';
     case 'swallow': return '🍚';
-    case 'rice': return '🍚'; // Corrected emoji for rice
+    case 'rice': return '🍚'; 
     case 'pasta': return '🍝';
     case 'salads': return '🥗';
     case 'breakfast': return '�';
-    default: return '🍽️'; // Default emoji
+    default: return '🍽️'; 
   }
 };
 
@@ -113,7 +113,7 @@ const Home = () => {
           ) : categories.length === 0 ? (
             <div className="alert alert-info text-center">No categories available.</div>
           ) : (
-            // FIX: Added justify-content-center to center cards when they don't fill the row
+            
             <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center">
               {categories.map(category => (
                 <div className="col" key={category.id}>
@@ -135,8 +135,8 @@ const Home = () => {
                         style={{
                           height: '12rem',
                           background: 'linear-gradient(45deg, #FF6B6B, #FFD166)', // A vibrant gradient
-                          fontSize: '4rem', // Large emoji size
-                          borderRadius: '0.375rem 0.375rem 0 0', // Match card-img-top border-radius
+                          fontSize: '4rem', 
+                          borderRadius: '0.375rem 0.375rem 0 0', 
                           textAlign: 'center'
                         }}
                       >

@@ -1,7 +1,7 @@
 // frontend/src/pages/MyOrders.jsx
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { getMyOrders } from '../api/orderApi'; // Changed from getOrders to getMyOrders
+import { getMyOrders } from '../api/orderApi'; 
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';

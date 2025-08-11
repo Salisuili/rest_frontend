@@ -1,6 +1,6 @@
 // frontend/src/context/CartContext.js
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { useAuth } from './AuthContext'; // Import useAuth to access user information
+import { useAuth } from './AuthContext';
 
 const CartContext = createContext();
 
@@ -9,37 +9,31 @@ export const useCart = () => {
 };
 
 export const CartProvider = ({ children }) => {
-  const { user, isAuthenticated } = useAuth(); // Get user and isAuthenticated from AuthContext
+  const { user, isAuthenticated } = useAuth(); 
   const [cartItems, setCartItems] = useState([]);
 
-  // Function to get cart from localStorage based on user ID
   const getCartFromLocalStorage = useCallback((userId) => {
     if (userId) {
       const storedCart = localStorage.getItem(`cart_${userId}`);
       return storedCart ? JSON.parse(storedCart) : [];
     }
-    return []; // Return empty array if no user ID
+    return []; 
   }, []);
 
-  // Function to save cart to localStorage based on user ID
   const saveCartToLocalStorage = useCallback((userId, items) => {
     if (userId) {
       localStorage.setItem(`cart_${userId}`, JSON.stringify(items));
     }
   }, []);
 
-  // Effect to load cart when user changes or component mounts
   useEffect(() => {
     if (isAuthenticated && user?.id) {
-      // Load the cart specific to this user
       setCartItems(getCartFromLocalStorage(user.id));
     } else {
-      // If no user is authenticated, clear the cart
       setCartItems([]);
     }
-  }, [isAuthenticated, user?.id, getCartFromLocalStorage]); // Depend on user.id and isAuthenticated
+  }, [isAuthenticated, user?.id, getCartFromLocalStorage]); 
 
-  // Effect to save cart whenever cartItems change for the current user
   useEffect(() => {
     if (isAuthenticated && user?.id) {
       saveCartToLocalStorage(user.id, cartItems);
@@ -77,7 +71,6 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = () => {
     setCartItems([]);
-    // Also clear from localStorage for the current user
     if (user?.id) {
       localStorage.removeItem(`cart_${user.id}`);
     }

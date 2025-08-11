@@ -1,21 +1,20 @@
 // frontend/src/pages/admin/Orders.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllOrders, updateOrderStatus } from '../../api/orderApi'; // Assuming getAllOrders and updateOrderStatus are here
+import { getAllOrders, updateOrderStatus } from '../../api/orderApi'; 
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { toast } from 'react-hot-toast';
 import { formatCurrency } from '../../utils/helpers'; 
 import { Link } from 'react-router-dom';
 
 const AdminOrders = () => {
-  const [orders, setOrders] = useState([]); // FIX: Initialize as an empty array
+  const [orders, setOrders] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filterStatus, setFilterStatus] = useState('all'); // State for status filter
-  const [searchTerm, setSearchTerm] = useState(''); // State for search term
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [searchTerm, setSearchTerm] = useState(''); 
   const navigate = useNavigate();
 
-  // Define valid statuses for dropdown and badge styling
   const validStatuses = [
     'all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded',
     'payment_pending', 'payment_failed', 'payment_discrepancy', 'payment_reversed'
@@ -27,12 +26,12 @@ const AdminOrders = () => {
       setError(null);
       try {
         const data = await getAllOrders();
-        setOrders(data || []); // FIX: Ensure data is an array, even if API returns null/undefined
+        setOrders(data || []); 
       } catch (err) {
         console.error('Error fetching orders:', err);
         setError(err.response?.data?.error || 'Failed to load orders.');
         toast.error(err.response?.data?.error || 'Failed to load orders.');
-        setOrders([]); // FIX: Set to empty array on error to prevent filter issues
+        setOrders([]); 
       } finally {
         setLoading(false);
       }
@@ -40,13 +39,11 @@ const AdminOrders = () => {
     fetchOrders();
   }, []); // Empty dependency array means this runs once on mount
 
-  // Function to handle status update from the table
   const handleStatusChange = async (orderId, newStatus) => {
     if (!window.confirm(`Are you sure you want to change status of Order ${orderId.substring(0, 8)} to "${newStatus}"?`)) {
-      return; // User cancelled
+      return; 
     }
     try {
-      // Optimistic update
       setOrders(prevOrders => prevOrders.map(order =>
         order.id === orderId ? { ...order, status: newStatus } : order
       ));
@@ -62,8 +59,7 @@ const AdminOrders = () => {
     }
   };
 
-  // Filtered orders logic
-  const filteredOrders = (orders || []).filter(order => { // FIX: Ensure 'orders' is an array before filtering (Line 70 equivalent)
+  const filteredOrders = (orders || []).filter(order => { 
     const matchesStatus = filterStatus === 'all' || order.status === filterStatus;
     const matchesSearch = searchTerm === '' ||
                           order.order_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||

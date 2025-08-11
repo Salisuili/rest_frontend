@@ -33,18 +33,15 @@ const Checkout = () => {
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
   const [calculatedDeliveryFee, setCalculatedDeliveryFee] = useState(0);
 
-  // --- ALL HOOK CALLS GO HERE, BEFORE ANY CONDITIONAL RETURNS ---
-
-  // Effect to handle redirection if user is not logged in
+ 
   useEffect(() => {
     if (!user) {
       // Store the current path in local storage before redirecting
       localStorage.setItem('redirectAfterLogin', location.pathname + location.search);
       navigate('/login');
-      // No need to return null here, as the component will re-render when user logs in
-      // and the `user` state updates.
+      
     }
-  }, [user, navigate, location]); // Depend on user, navigate, and location
+  }, [user, navigate, location]); 
 
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -367,8 +364,7 @@ const Checkout = () => {
             </div>
 
             <div className="col-md-4">
-              {/* CartSummary can be removed or simplified if its logic is now in this form */}
-              {/* <CartSummary /> */}
+             
             </div>
           </div>
         </div>

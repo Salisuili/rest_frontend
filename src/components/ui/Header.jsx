@@ -10,10 +10,8 @@ export default function Header() {
   const { cartItemCount } = useCart();
   const location = useLocation();
 
-  // Determine if the current path is an admin page
   const isAdminPath = location.pathname.startsWith('/admin');
 
-  // Function to close the Bootstrap offcanvas programmatically
   const closeOffcanvas = () => {
     const offcanvasElement = document.getElementById('offcanvasNavbar');
     if (offcanvasElement) {
@@ -21,7 +19,6 @@ export default function Header() {
       if (bsOffcanvas) {
         bsOffcanvas.hide();
       } else {
-        // If no instance exists, hide it manually
         offcanvasElement.classList.remove('show');
         document.body.classList.remove('offcanvas-backdrop');
       }
@@ -34,12 +31,10 @@ export default function Header() {
     closeOffcanvas();
   };
 
-  // Close offcanvas when location changes
   useEffect(() => {
     closeOffcanvas();
   }, [location]);
 
-  // If on an admin page, render a simplified header
   if (isAdminPath) {
     return (
       <header className="bg-secondary text-white py-3 shadow-sm">
@@ -64,16 +59,13 @@ export default function Header() {
     );
   }
 
-  // Default header for public pages (responsive)
   return (
     <header className="navbar navbar-expand-lg navbar-dark bg-warning py-3 shadow-sm">
       <div className="container">
-        {/* Logo/Brand */}
         <Link to="/" className="navbar-brand fs-4 fw-bold">
           Tripple S Restaurant
         </Link>
 
-        {/* Navbar Toggler for mobile */}
         <button
           className="navbar-toggler"
           type="button"
@@ -86,7 +78,6 @@ export default function Header() {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        {/* Offcanvas for mobile menu */}
         <div
           className="offcanvas offcanvas-end bg-warning text-white"
           tabIndex="-1"
@@ -151,7 +142,6 @@ export default function Header() {
               )}
             </ul>
 
-            {/* Auth Buttons/User Info for public pages */}
             <div className="d-lg-none mt-3">
               {isAuthenticated ? (
                 <div className="dropdown">
@@ -207,7 +197,6 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Desktop Auth Buttons */}
         <div className="d-none d-lg-block ms-auto">
           {isAuthenticated ? (
             <div className="dropdown">

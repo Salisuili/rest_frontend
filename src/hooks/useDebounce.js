@@ -19,16 +19,10 @@ function useDebounce(value, delay) {
     const handler = setTimeout(() => {
       setDebouncedValue(value);
     }, delay);
-
-    // Cleanup function:
-    // This will run if 'value' or 'delay' changes (i.e., user types again)
-    // or if the component unmounts. It clears the previous timeout,
-    // ensuring the handler is only called after the specified delay
-    // without new input.
     return () => {
       clearTimeout(handler);
     };
-  }, [value, delay]); // Effect re-runs only if value or delay changes
+  }, [value, delay]); 
 
   return debouncedValue;
 }

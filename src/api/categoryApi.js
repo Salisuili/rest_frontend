@@ -5,9 +5,6 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 if (!API_URL) {
     console.error('Environment variable REACT_APP_API_URL is not set!');
-    // Consider how you want to handle this in your application
-    // For local development, you might set a default here:
-    // API_URL = 'http://localhost:5000';
 }
 
 // Helper to get authenticated headers
@@ -48,7 +45,7 @@ export const addCategory = async (categoryData) => {
     }
 };
 
-// --- Update Category (NEWLY ADDED) ---
+// --- Update Category ---
 export const updateCategory = async (id, categoryData) => {
     try {
         const response = await axios.put(`${API_URL}/api/categories/${id}`, categoryData, {
@@ -61,13 +58,13 @@ export const updateCategory = async (id, categoryData) => {
     }
 };
 
-// --- Delete Category (NEWLY ADDED) ---
+// --- Delete Category ---
 export const deleteCategory = async (id) => {
     try {
         const response = await axios.delete(`${API_URL}/api/categories/${id}`, {
             headers: getAuthHeaders(),
         });
-        return response.data; // For 204 No Content, response.data will be empty
+        return response.data; 
     } catch (error) {
         console.error(`Error deleting category with ID ${id}:`, error.response?.data || error.message);
         throw new Error(error.response?.data?.error || 'Failed to delete category.');

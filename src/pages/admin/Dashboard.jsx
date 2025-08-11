@@ -15,9 +15,8 @@ const Dashboard = () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await getDashboardData(); // Fetch data from the API
+        const data = await getDashboardData(); 
         
-        // Format stats for display
         const formattedStats = [
           { title: 'Total Orders', value: data.stats[0].value, icon: '📦' },
           { title: 'Total Revenue', value: `₦${data.stats[1].value.toLocaleString('en-US')}`, icon: '💰' },
@@ -38,7 +37,7 @@ const Dashboard = () => {
     };
 
     fetchDashboard();
-  }, []); // Runs once on component mount
+  }, []); 
 
   if (loading) {
     return <LoadingSpinner />;
@@ -93,21 +92,21 @@ const Dashboard = () => {
                 <tbody>
                   {recentOrders.map(order => (
                     <tr key={order.id}>
-                      <td>{order.order_number || order.id.substring(0, 8)}</td> {/* Fallback for order_number */}
-                      <td>{order.users?.full_name || 'N/A'}</td> {/* Access customer name from joined data */}
+                      <td>{order.order_number || order.id.substring(0, 8)}</td> 
+                      <td>{order.users?.full_name || 'N/A'}</td> 
                       <td>₦{order.total_amount.toLocaleString('en-US')}</td>
                       <td>
                         <span className={`badge ${
                           order.status === 'completed' ? 'bg-success' :
                           order.status === 'pending' ? 'bg-warning' :
-                          'bg-info' // Or 'bg-danger' for cancelled/failed
+                          'bg-info' 
                         }`}>
                           {order.status}
                         </span>
                       </td>
                       <td>{new Date(order.created_at).toLocaleDateString('en-US')}</td>
                       <td>
-                        <button className="btn btn-sm btn-outline-primary">View</button>
+                        {/* <button className="btn btn-sm btn-outline-primary">View</button> */}
                       </td>
                     </tr>
                   ))}

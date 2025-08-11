@@ -1,15 +1,14 @@
 // frontend/src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import supabase from '../config/supabase'; // Consider removing if not primarily using Supabase Auth
-import { login as apiLogin, register as apiRegister, getProfile } from '../api/auth'; // Ensure getProfile is imported
+import { login as apiLogin, register as apiRegister, getProfile } from '../api/auth'; 
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false); // <--- NEW: State to track admin status
+  const [isAdmin, setIsAdmin] = useState(false); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,43 +18,32 @@ export const AuthProvider = ({ children }) => {
 
       if (storedToken) {
         try {
-          // Attempt to fetch profile using the stored token
-          const userProfile = await getProfile(); // This call uses the stored token implicitly via axios headers
+          const userProfile = await getProfile();
           setUser(userProfile);
-          setIsAdmin(userProfile.role === 'admin'); // <--- Set isAdmin based on fetched role
+          setIsAdmin(userProfile.role === 'admin'); 
           console.log("User re-hydrated from profile API:", userProfile.email);
         } catch (error) {
           console.error('Failed to re-hydrate user from profile API. Clearing session:', error);
-          // If profile fetch fails (e.g., 401 Unauthorized), clear stored data
           localStorage.removeItem('token');
           setUser(null);
-          setIsAdmin(false); // <--- Reset isAdmin
+          setIsAdmin(false); 
         }
       }
       setLoading(false);
     };
 
-    loadInitialAuth(); // Call it once on mount
+    loadInitialAuth(); 
 
-    // REMOVED: supabase.auth.onAuthStateChange listener
-    // This listener is typically for Supabase's own auth system.
-    // Since you're using a custom backend for primary auth, this can be removed
-    // to avoid potential conflicts or unnecessary re-renders.
-    // If you explicitly use supabase.auth.signInWithPassword elsewhere,
-    // you might need to re-evaluate how to sync.
-    // For this setup, we rely on our custom backend's JWT and getProfile.
-
-    // return () => subscription.unsubscribe(); // No subscription to unsubscribe from
-  }, []); // Empty dependency array ensures it runs once on mount
+  }, []); 
 
 
-  const login = async (credentials) => { // Expects an object { email, password }
-    setLoading(true); // Start loading during login
+  const login = async (credentials) => { 
+    setLoading(true); 
     try {
-      const result = await apiLogin(credentials); // This sets the token in localStorage via apiLogin
+      const result = await apiLogin(credentials); 
       
-      setUser(result.user); // Set the full user object including role
-      setIsAdmin(result.user.role === 'admin'); // <--- Set isAdmin
+      setUser(result.user); 
+      setIsAdmin(result.user.role === 'admin'); 
       
       navigate('/');
       return { success: true, user: result.user };
@@ -63,17 +51,17 @@ export const AuthProvider = ({ children }) => {
       console.error('AuthContext Login failed:', error);
       return { success: false, error: error.message };
     } finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 
   const register = async (userData) => {
-    setLoading(true); // Start loading during register
+    setLoading(true); 
     try {
-      const result = await apiRegister(userData); // This sets the token in localStorage via apiRegister
+      const result = await apiRegister(userData); 
       
-      setUser(result.user); // Set the full user object including role
-      setIsAdmin(result.user.role === 'admin'); // <--- Set isAdmin
+      setUser(result.user); 
+      setIsAdmin(result.user.role === 'admin'); 
       
       navigate('/');
       return { success: true, user: result.user };
@@ -81,31 +69,25 @@ export const AuthProvider = ({ children }) => {
       console.error('AuthContext Register failed:', error);
       return { success: false, error: error.message };
     } finally {
-      setLoading(false); // End loading
+      setLoading(false); 
     }
   };
 
-  const logout = async () => {
-    // If you're solely relying on your custom backend, `supabase.auth.signOut()` might be unnecessary
-    // unless you also use Supabase for row-level security with its auth.
-    // If you only use custom backend auth, remove this:
-    // await supabase.auth.signOut();
-    
+  const logout = async () => {    
     localStorage.removeItem('token');
-    // localStorage.removeItem('user'); // No longer storing 'user' in localStorage
     setUser(null);
-    setIsAdmin(false); // <--- Reset isAdmin on logout
+    setIsAdmin(false); 
     navigate('/login');
   };
 
-  const isAuthenticated = !!user; // Derived state
+  const isAuthenticated = !!user; 
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated, // Expose isAuthenticated
-        isAdmin,         // <--- Expose isAdmin
+        isAuthenticated, 
+        isAdmin,         
         login,
         register,
         logout,

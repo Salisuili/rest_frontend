@@ -23,7 +23,7 @@ export const getDashboardData = async () => {
         const response = await axios.get(`${API_URL}/api/admin/dashboard`, {
             headers: getAuthHeaders(),
         });
-        return response.data; // This will contain { stats, recentOrders }
+        return response.data;
     } catch (error) {
         console.error('Error fetching dashboard data:', error.response?.data || error.message);
         throw new Error(error.response?.data?.error || 'Failed to fetch dashboard data.');

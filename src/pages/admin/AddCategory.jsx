@@ -16,7 +16,7 @@ const AddCategory = () => {
     setLoading(true);
     try {
       const newCategory = { name, description, image_url: imageUrl };
-      await addCategory(newCategory); // <--- CHANGED: Call addCategory
+      await addCategory(newCategory); 
       toast.success('Category added successfully!');
       navigate('/admin/categories');
     } catch (error) {

@@ -1,9 +1,9 @@
 // frontend/src/pages/admin/MenuItems.jsx
 import React, { useEffect, useState } from 'react'; // Added React import
 import { Link } from 'react-router-dom';
-import { toast } from 'react-hot-toast'; // For notifications
-import { getMenuItems, updateMenuItemAvailability, deleteMenuItem } from '../../api/menuItemApi'; // <--- NEW IMPORTS
-import LoadingSpinner from '../../components/ui/LoadingSpinner'; // Assuming you have this
+import { toast } from 'react-hot-toast'; 
+import { getMenuItems, updateMenuItemAvailability, deleteMenuItem } from '../../api/menuItemApi'; 
+import LoadingSpinner from '../../components/ui/LoadingSpinner'; 
 
 const MenuItems = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -14,7 +14,7 @@ const MenuItems = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getMenuItems(); // Fetch data from the API
+      const data = await getMenuItems(); 
       setMenuItems(data);
     } catch (err) {
       console.error('Error fetching menu items:', err);
@@ -26,7 +26,7 @@ const MenuItems = () => {
   };
 
   useEffect(() => {
-    fetchMenuItems(); // Run on component mount
+    fetchMenuItems(); 
   }, []); // Empty dependency array
 
   const handleToggleAvailability = async (id, currentStatus) => {
@@ -94,8 +94,7 @@ const MenuItems = () => {
                   {menuItems.map(item => (
                     <tr key={item.id}>
                       <td>{item.name}</td>
-                      {/* Access category name from the joined data.
-                          Backend is sending it as `category_name` after flattening. */}
+                     
                       <td>{item.category_name || 'N/A'}</td> 
                       <td>₦{item.price.toLocaleString('en-US')}</td>
                       <td>

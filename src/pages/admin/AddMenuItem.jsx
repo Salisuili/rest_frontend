@@ -1,18 +1,16 @@
 // frontend/src/pages/admin/AddMenuItem.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Import axios for direct API calls
-import { createMenuItem } from '../../api/menuItemApi'; // Assuming this API handles sending the URL
+import axios from 'axios'; 
+import { createMenuItem } from '../../api/menuItemApi'; 
 import { getCategories } from '../../api/categoryApi';
-import { toast } from 'react-hot-toast'; // Using react-hot-toast for consistency
+import { toast } from 'react-hot-toast';
 
-// Define API_URL and getAuthHeaders directly in this file
-// REACT_APP_API_URL is expected to be http://localhost:5001 or your base Render URL
 const API_URL = process.env.REACT_APP_API_URL;
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
-  const headers = {}; // Content-Type will be set automatically by FormData, do not manually set to application/json
+  const headers = {}; 
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -24,11 +22,11 @@ const AddMenuItem = () => {
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [categoryId, setCategoryId] = useState('');
-  const [imageFile, setImageFile] = useState(null); // State to store the selected image file
-  const [uploadingImage, setUploadingImage] = useState(false); // State for image upload loading
+  const [imageFile, setImageFile] = useState(null); 
+  const [uploadingImage, setUploadingImage] = useState(false); 
   const [isAvailable, setIsAvailable] = useState(true);
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false); // For form submission loading
+  const [loading, setLoading] = useState(false); 
   const [fetchingCategories, setFetchingCategories] = useState(true);
   const navigate = useNavigate();
 
@@ -62,26 +60,17 @@ const AddMenuItem = () => {
     setUploadingImage(true);
     try {
       const formData = new FormData();
-      // CRITICAL: 'menuImage' must match the fieldname in multer.single('menuImage') in uploadRoutes.js
       formData.append('menuImage', file); 
 
-      // Make a POST request to your backend's upload endpoint
       const response = await axios.post(`${API_URL}/api/upload/menu-item-image`, formData, {
         headers: {
           ...getAuthHeaders(),
-          // 'Content-Type': 'multipart/form-data' is automatically set by Axios when using FormData
-          // Do NOT set it manually here, as it can cause issues.
         },
-        // You can add onUploadProgress here if you want to show progress
-        // onUploadProgress: (event) => {
-        //   const percent = Math.round((event.loaded * 100) / event.total);
-        //   // Update a state variable for progress bar if you have one
-        // }
       });
 
       if (response.data && response.data.imageUrl) {
         toast.success('Image uploaded successfully!');
-        return response.data.imageUrl; // Return the URL from the backend
+        return response.data.imageUrl; 
       } else {
         throw new Error('Backend did not return image URL.');
       }
@@ -89,7 +78,7 @@ const AddMenuItem = () => {
     } catch (error) {
       console.error('Error during image upload process:', error.response?.data || error.message);
       toast.error(error.response?.data?.error || 'Failed to upload image.');
-      setImageFile(null); // Clear selected file on error
+      setImageFile(null); 
       return null;
     } finally {
       setUploadingImage(false);
@@ -106,7 +95,7 @@ const AddMenuItem = () => {
       uploadedImageUrl = await uploadImageToServer(imageFile);
       if (!uploadedImageUrl) {
         setLoading(false);
-        return; // Stop form submission if image upload failed
+        return; 
       }
     }
 
@@ -116,10 +105,10 @@ const AddMenuItem = () => {
         description,
         price: parseFloat(price),
         category_id: categoryId,
-        image_url: uploadedImageUrl, // Use the URL returned by the backend
+        image_url: uploadedImageUrl, 
         is_available: isAvailable,
       };
-      await createMenuItem(newMenuItem); // Send menu item data with the image URL
+      await createMenuItem(newMenuItem); 
       toast.success('Menu item added successfully!');
       navigate('/admin/menu');
     } catch (error) {
@@ -208,7 +197,7 @@ const AddMenuItem = () => {
             type="file"
             className="form-control"
             id="itemImageUpload"
-            accept="image/*" // Only allow image files
+            accept="image/*" 
             onChange={handleImageFileChange}
             disabled={loading || uploadingImage}
           />
@@ -220,7 +209,7 @@ const AddMenuItem = () => {
               <div
                 className="progress-bar progress-bar-striped progress-bar-animated"
                 role="progressbar"
-                style={{ width: `100%` }} // Placeholder as actual progress needs onUploadProgress
+                style={{ width: `100%` }} 
                 aria-valuenow={100}
                 aria-valuemin="0"
                 aria-valuemax="100"
@@ -230,7 +219,6 @@ const AddMenuItem = () => {
             </div>
           )}
         </div>
-        {/* End Image Upload Section */}
 
         <div className="form-check mb-3">
           <input

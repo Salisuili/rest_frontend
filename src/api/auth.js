@@ -40,7 +40,7 @@ export const login = async (credentials) => {
     }
 };
 
-// --- Corrected Get Profile Function ---
+
 export const getProfile = async () => {
     const token = localStorage.getItem('token');
 
@@ -53,9 +53,7 @@ export const getProfile = async () => {
             headers: getAuthHeaders()
         });
 
-        // --- THE CHANGE IS HERE ---
-        // Your backend directly returns the user object, so just return response.data
-        return response.data; // <--- CORRECTED: Return the user object directly
+        return response.data; 
     } catch (error) {
         console.error('API Get Profile Error:', error.response?.data || error.message);
         throw new Error(error.response?.data?.error || 'Failed to fetch user profile.');

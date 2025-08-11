@@ -2,15 +2,15 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import {
-  getAllUsers,      // Import the specific API function
-  deleteUser,       // Import the specific API function
-  updateUserRole    // Import the specific API function
-} from '../../api/userApi'; // Corrected import path (now it's userApi.js)
-import LoadingSpinner from '../../components/ui/LoadingSpinner'; // Assuming this exists
-import { useAuth } from '../../context/AuthContext'; // To get current user's ID for disabling self-actions
+  getAllUsers,      
+  deleteUser,       
+  updateUserRole    
+} from '../../api/userApi';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
+import { useAuth } from '../../context/AuthContext'; 
 
 const UserManagement = () => {
-    const { user: currentUser } = useAuth(); // Get the currently logged-in user from AuthContext
+    const { user: currentUser } = useAuth(); 
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -21,7 +21,7 @@ const UserManagement = () => {
             try {
                 setLoading(true);
                 setError(null);
-                const data = await getAllUsers(); // Use the imported API function
+                const data = await getAllUsers(); 
                 setUsers(data);
             } catch (err) {
                 console.error('Error fetching users:', err.response?.data?.error || err.message);
@@ -39,8 +39,8 @@ const UserManagement = () => {
         if (window.confirm(`Are you sure you want to delete user "${userName}"? This action cannot be undone.`)) {
             try {
                 setLoading(true);
-                await deleteUser(userId); // Use the imported API function
-                setUsers(users.filter(user => user.id !== userId)); // Remove deleted user from state
+                await deleteUser(userId); 
+                setUsers(users.filter(user => user.id !== userId)); 
                 toast.success(`User "${userName}" deleted successfully!`);
             } catch (err) {
                 console.error('Error deleting user:', err.response?.data?.error || err.message);
@@ -55,8 +55,8 @@ const UserManagement = () => {
     const handleUpdateUserRole = async (userId, newRole, userName) => {
         try {
             setLoading(true);
-            const response = await updateUserRole(userId, newRole); // Use the imported API function
-            setUsers(users.map(user => user.id === userId ? response.user : user)); // Update user with response.user (from backend)
+            const response = await updateUserRole(userId, newRole); 
+            setUsers(users.map(user => user.id === userId ? response.user : user)); 
             toast.success(`Role for "${userName}" updated to ${newRole}!`);
         } catch (err) {
             console.error('Error updating user role:', err.response?.data?.error || err.message);
@@ -116,13 +116,12 @@ const UserManagement = () => {
                                             className="form-select form-select-sm"
                                             value={user.role}
                                             onChange={(e) => handleUpdateUserRole(user.id, e.target.value, user.full_name)}
-                                            // Disable if current user is trying to change their own role
-                                            // or if the user being edited is the only admin
+                                            
                                             disabled={user.id === currentUser?.id || (user.role === 'admin' && users.filter(u => u.role === 'admin').length === 1)}
                                         >
                                             <option value="customer">Customer</option>
                                             <option value="admin">Admin</option>
-                                            {/* Add other roles if applicable, e.g., <option value="driver">Driver</option> */}
+                                            
                                         </select>
                                     </td>
                                     <td>{new Date(user.created_at).toLocaleDateString()}</td>

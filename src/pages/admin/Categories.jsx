@@ -1,9 +1,9 @@
 // frontend/src/pages/admin/Categories.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { toast } from 'react-hot-toast'; // Assuming you have react-hot-toast for notifications
-import { getCategories } from '../../api/categoryApi'; // We will create this file next
-import LoadingSpinner from '../../components/ui/LoadingSpinner'; // Assuming you have a loading spinner component
+import { toast } from 'react-hot-toast'; 
+import { getCategories } from '../../api/categoryApi'; 
+import LoadingSpinner from '../../components/ui/LoadingSpinner'; 
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -15,7 +15,7 @@ const Categories = () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await getCategories(); // Call the API to fetch categories
+        const data = await getCategories(); 
         setCategories(data);
       } catch (err) {
         console.error('Error fetching categories:', err);
@@ -27,10 +27,10 @@ const Categories = () => {
     };
 
     fetchCategories();
-  }, []); // Empty dependency array means this runs once on component mount
+  }, []); 
 
   if (loading) {
-    return <LoadingSpinner />; // Show a loading spinner while data is being fetched
+    return <LoadingSpinner />; 
   }
 
   if (error) {

@@ -1,19 +1,13 @@
 // frontend/src/components/menu/MenuItemCard.jsx
-import React from 'react';
-import { useCart } from '../../context/CartContext'; // Assuming cart context is used
-import { toast } from 'react-hot-toast'; // For consistent toast notifications
+import { useCart } from '../../context/CartContext'; 
+import { toast } from 'react-hot-toast'; 
 
 const MenuItemCard = ({ item }) => {
   const { addToCart } = useCart();
 
-  // Define a placeholder image URL
-  // This uses a placeholder service. You could also use a local image asset:
-  // const placeholderImage = '/path/to/your/placeholder-image.png';
   const placeholderImage = 'https://placehold.co/400x300/e0e0e0/555555?text=No+Image';
 
-  // Construct the full image URL. If item.image_url is a relative path (e.g., /uploads/...),
-  // prepend the backend API URL. If it's already a full URL (e.g., from Supabase Storage), use it directly.
-  // Assuming API_URL is defined in your frontend's .env (e.g., http://localhost:5001)
+ 
   const API_URL = process.env.REACT_APP_API_URL;
   const fullImageUrl = item.image_url 
     ? (item.image_url.startsWith('/uploads/') ? `${API_URL}${item.image_url}` : item.image_url)
@@ -29,12 +23,11 @@ const MenuItemCard = ({ item }) => {
       {/* Image with fallback */}
       <img
         src={fullImageUrl}
-        className="card-img-top object-cover" // object-cover to maintain aspect ratio
+        className="card-img-top object-cover" 
         alt={item.name}
-        style={{ height: '200px', width: '100%' }} // Fixed height for consistent card appearance
+        style={{ height: '200px', width: '100%' }} 
         onError={(e) => {
-          // Fallback if the image fails to load (e.g., broken URL)
-          e.target.onerror = null; // Prevent infinite loop
+          e.target.onerror = null; 
           e.target.src = placeholderImage;
         }}
       />

@@ -18,7 +18,6 @@ const Login = () => {
     try {
       const result = await login({ email, password });
 
-      // Ensure your login function in AuthContext returns an object like { success: true } or { success: false, error: '...' }
       if (result.success) {
         toast.success('Login successful!');
         setEmail('');
@@ -37,8 +36,8 @@ const Login = () => {
         toast.error(result.error || 'Login failed');
       }
     } catch (error) {
-      console.error('Login process error:', error); // Log client-side errors
-      // You can refine this message if your AuthContext's login function throws specific errors
+      console.error('Login process error:', error); 
+     
       toast.error(error.message || 'An unexpected error occurred during login.');
     } finally {
       setLoading(false);

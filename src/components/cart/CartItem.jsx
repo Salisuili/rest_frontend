@@ -2,12 +2,15 @@ import { useCart } from '../../context/CartContext';
 
 const CartItem = ({ item }) => {
   const { updateQuantity, removeFromCart } = useCart();
+  const fullImageUrl = item.image_url 
+    ? (item.image_url.startsWith('/uploads/') ? `${API_URL}${item.image_url}` : item.image_url)
+    : placeholderImage;
 
   return (
     <div className="d-flex align-items-center justify-content-between py-3 border-bottom">
       <div className="d-flex align-items-center me-3">
         <img 
-          src={item.image_url || '/placeholder-food.jpg'} 
+          src={fullImageUrl} 
           alt={item.name}
           className="rounded me-3"
           style={{ width: '64px', height: '64px', objectFit: 'cover' }}

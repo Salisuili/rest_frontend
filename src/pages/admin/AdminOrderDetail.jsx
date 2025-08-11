@@ -4,10 +4,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getOrderById, updateOrderStatus } from '../../api/orderApi';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { toast } from 'react-hot-toast';
-import { formatCurrency } from '../../utils/helpers'; // Assuming you have this helper
+import { formatCurrency } from '../../utils/helpers'; 
 
 const AdminOrderDetail = () => {
-  const { id: orderId } = useParams(); // Get order ID from the URL
+  const { id: orderId } = useParams(); 
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -27,7 +27,7 @@ const AdminOrderDetail = () => {
       try {
         const fetchedOrder = await getOrderById(orderId);
         setOrder(fetchedOrder);
-        setCurrentStatus(fetchedOrder.status); // Set initial status for dropdown
+        setCurrentStatus(fetchedOrder.status); 
       } catch (err) {
         console.error('Error fetching admin order details:', err);
         setError(err.response?.data?.error || 'Failed to load order details.');
@@ -52,12 +52,10 @@ const AdminOrderDetail = () => {
     try {
       await updateOrderStatus(orderId, newStatus);
       toast.success(`Order status updated to "${newStatus}"!`);
-      // No need to refetch the whole order, just update local state if needed
       setOrder(prevOrder => ({ ...prevOrder, status: newStatus }));
     } catch (err) {
       console.error('Error updating order status:', err);
       toast.error(err.response?.data?.error || 'Failed to update order status.');
-      // Revert status if update fails
       setCurrentStatus(order.status);
     } finally {
       setIsUpdatingStatus(false);

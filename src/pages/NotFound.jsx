@@ -14,10 +14,7 @@ const NotFound = () => {
         <Link to="/" className="btn btn-primary btn-lg">
           Go to Homepage
         </Link>
-        {/* Optional: Add a link to the menu or contact page */}
-        {/* <Link to="/menu" className="btn btn-outline-secondary btn-lg ms-3">
-          Browse Menu
-        </Link> */}
+        
       </div>
     </div>
   );
